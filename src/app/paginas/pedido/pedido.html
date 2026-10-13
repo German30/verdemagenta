@@ -1,0 +1,105 @@
+<header class="lienzo encabezado-pagina">
+  <div class="contenedor">
+    <ol class="migas">
+      <li><a routerLink="/">Inicio</a></li>
+      <li aria-current="page">Tu pedido</li>
+    </ol>
+    <h1 class="rotulo">Tu pedido</h1>
+  </div>
+</header>
+
+<div class="contenedor">
+  @if (catalogo.estado() === 'cargando') {
+    <p class="espera">Cargando tu pedido…</p>
+  } @else if (!pedido.lineas().length) {
+    <div class="vacio">
+      <svg class="vacio__cordel" viewBox="0 0 240 70" aria-hidden="true">
+        <path d="M0 10 Q 120 80 240 10" />
+      </svg>
+      <h2 class="rotulo">Todavía no tomas ningún color</h2>
+      <p>Elige tus rollos en la tienda; aquí se arma el mensaje para enviarlo por WhatsApp.</p>
+      <a class="boton" routerLink="/tienda">Ir a la tienda <app-icono nombre="flecha" /></a>
+    </div>
+  } @else {
+    <div class="diseno">
+      <section aria-labelledby="titulo-lineas">
+        <div class="lineas__cabeza">
+          <h2 id="titulo-lineas" class="rotulo">
+            <span class="cifra">{{ pedido.piezas() }}</span> {{ pedido.piezas() === 1 ? 'pieza' : 'piezas' }}
+          </h2>
+          <button type="button" class="vaciar" (click)="vaciar()">
+            <app-icono nombre="quitar" /> Vaciar pedido
+          </button>
+        </div>
+
+        <ul class="lineas">
+          @for (l of pedido.lineas(); track l.producto.id) {
+            <li class="linea" animate.enter="entra-linea" animate.leave="sale-linea">
+              <app-foto class="linea__rollo vt-foto" [producto]="l.producto" [style.view-transition-name]="'foto-' + l.producto.id" tamanos="72px" [sombra]="false" />
+              <div class="linea__nombre">
+                <a class="rotulo" [routerLink]="['/producto', l.producto.id]">{{ l.producto.titulo }}</a>
+                <span><span class="sello">{{ grosor(l.producto.grosor) }}</span> <span class="cifra">{{ l.producto.precio | precio }} c/u</span></span>
+              </div>
+              <div class="paso" role="group" [attr.aria-label]="'Cantidad de ' + l.producto.titulo">
+                <button type="button" (click)="pedido.fijar(l.producto.id, l.cantidad - 1)"
+                  [attr.aria-label]="l.cantidad === 1 ? 'Quitar ' + l.producto.titulo : 'Uno menos'">
+                  <app-icono [nombre]="l.cantidad === 1 ? 'quitar' : 'menos'" />
+                </button>
+                <output class="cifra">{{ l.cantidad }}</output>
+                <button type="button" (click)="pedido.fijar(l.producto.id, l.cantidad + 1)" [disabled]="l.cantidad >= 99"
+                  aria-label="Uno más">
+                  <app-icono nombre="mas" />
+                </button>
+              </div>
+              <span class="linea__subtotal cifra">{{ l.cantidad * l.producto.precio | precio }}</span>
+            </li>
+          }
+        </ul>
+
+        <div class="total">
+          <span>Total</span>
+          <strong class="cifra">{{ pedido.total() | precio }} <small>MXN</small></strong>
+        </div>
+        <p class="aclaracion">El envío y la forma de pago se acuerdan por WhatsApp al confirmar tu pedido.</p>
+        <a class="seguir" routerLink="/tienda"><app-icono nombre="atras" /> Seguir eligiendo</a>
+      </section>
+
+      <aside class="envio" aria-labelledby="titulo-envio">
+        <h2 id="titulo-envio" class="rotulo">Envíalo por WhatsApp</h2>
+
+        <div class="campo">
+          <label for="nombre">Tu nombre <span class="opcional">opcional</span></label>
+          <input id="nombre" autocomplete="name" [value]="cliente().nombre" (input)="campo('nombre', $event)" />
+        </div>
+        <div class="campo">
+          <label for="entrega">Ciudad o colonia de entrega <span class="opcional">opcional</span></label>
+          <input id="entrega" autocomplete="address-level2" [value]="cliente().entrega" (input)="campo('entrega', $event)" />
+        </div>
+        <div class="campo">
+          <label for="notas">Notas <span class="opcional">opcional</span></label>
+          <textarea id="notas" rows="2" placeholder="Por ejemplo: lo necesito para el viernes" [value]="cliente().notas"
+            (input)="campo('notas', $event)"></textarea>
+        </div>
+
+        <figure class="vista">
+          <figcaption>Así llega tu mensaje</figcaption>
+          <div class="vista__burbuja">{{ vista() }}</div>
+        </figure>
+
+        <a class="boton boton--pedido boton--ancho enviar" [href]="enlace()" target="_blank" rel="noopener"
+          (click)="enviado.set(true)">
+          <app-icono nombre="whatsapp" /> Enviar pedido por WhatsApp
+        </a>
+        @if (sinNumero) {
+          <p class="aviso-dev">Falta configurar el número de la tienda en <code>tienda.config.ts</code>; por ahora WhatsApp te pedirá elegir el contacto.</p>
+        }
+        @if (enviado()) {
+          <p class="enviado" role="status">
+            <app-icono nombre="listo" /> ¿Ya se envió? Puedes
+            <button type="button" (click)="vaciar()">vaciar el pedido</button> para empezar otro.
+          </p>
+        }
+      </aside>
+    </div>
+  }
+</div>

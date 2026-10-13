@@ -1,0 +1,481 @@
+// Verdemagenta — mundo "muestrario de color".
+// Fondo menta claro, tinta ciruela, magenta solo para pedir. Sin verde oscuro, rojo ni dorado:
+// esa combinación se leía navideña.
+
+:root {
+  color-scheme: light;
+
+  --ciruela-950: #160a1d;
+  --ciruela-900: #211029;
+  --ciruela-800: #2e1838;
+  --ciruela-700: #4a2a5c;
+  --ciruela-300: #b9a3c6;
+
+  --menta-600: #138a64;
+  --menta-500: #2bb383;
+  --menta-300: #8fdcbc;
+  --menta-200: #c8f0dd;
+  --menta-100: #e2f7ec;
+
+  --magenta-700: #a3115a;
+  --magenta-600: #c2186c;
+  --magenta-500: #d6247a;
+  --magenta-300: #f39bc4;
+  --magenta-100: #fbe3ee;
+
+  --suelo: #f4f7f5;
+  --suelo-2: #e7eeea;
+  --carton: #ffffff;
+  --tinta: #24132d;
+  --tinta-2: #5b4b64;
+  --tinta-3: #736679;
+  --linea: #ddd6e1;
+  --linea-suave: #ece8ef;
+
+  --fuente: 'Archivo', system-ui, sans-serif;
+
+  --radio: 6px;
+  --sombra-tarjeta: 0 1px 2px rgb(46 24 56 / 0.06), 0 6px 18px -6px rgb(46 24 56 / 0.14);
+  --sombra-alzada: 0 2px 4px rgb(46 24 56 / 0.08), 0 18px 36px -12px rgb(46 24 56 / 0.28);
+  --sombra-panel: 0 1px 2px rgb(46 24 56 / 0.08), 0 12px 32px -8px rgb(46 24 56 / 0.22);
+
+  --salida: cubic-bezier(0.16, 1, 0.3, 1);
+  --gutter: clamp(16px, 4vw, 48px);
+  --ancho: 1240px;
+  --cabecera: 68px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--cabecera) + 16px);
+  scrollbar-color: var(--ciruela-300) var(--suelo-2);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--suelo);
+  color: var(--tinta);
+  font-family: var(--fuente);
+  font-size: 1rem;
+  line-height: 1.55;
+  font-variation-settings: 'wdth' 100;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  caret-color: var(--magenta-500);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--magenta-500);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--suelo-2);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ciruela-300);
+  border: 3px solid var(--suelo-2);
+  border-radius: 99px;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.22em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--magenta-500);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.solo-lectores {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.contenedor {
+  width: 100%;
+  max-width: calc(var(--ancho) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+// Rótulo: Archivo semiangosta, peso alto, en caja baja. Suena a catálogo, no a etiqueta de ropa.
+.rotulo {
+  font-variation-settings: 'wdth' 88;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+}
+
+.cifra {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+// Grosor: pastilla con la tira dibujada a escala (--ancho en cm)
+.sello {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.28em 0.6em 0.28em 0.5em;
+  border-radius: 99px;
+  background: var(--menta-100);
+  color: var(--menta-600);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+
+  &::before {
+    content: '';
+    width: 3px;
+    height: 0.9em;
+    border-radius: 1px;
+    background: currentColor;
+  }
+}
+
+// Botones
+.boton {
+  --fondo: var(--ciruela-700);
+  --texto: #fff;
+  --borde: var(--fondo);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  min-height: 46px;
+  padding: 0.7em 1.25em;
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio);
+  background: var(--fondo);
+  color: var(--texto);
+  font-weight: 700;
+  font-size: 0.975rem;
+  line-height: 1.1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.18s var(--salida),
+    border-color 0.18s var(--salida),
+    color 0.18s var(--salida),
+    transform 0.18s var(--salida);
+
+  &:hover {
+    --fondo: var(--ciruela-800);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+  svg {
+    width: 1.2em;
+    height: 1.2em;
+    flex: none;
+  }
+}
+
+.boton--pedido {
+  --fondo: var(--magenta-500);
+  &:hover {
+    --fondo: var(--magenta-600);
+  }
+}
+
+.boton--carton {
+  --fondo: var(--carton);
+  --texto: var(--ciruela-800);
+  &:hover {
+    --fondo: var(--menta-100);
+  }
+}
+
+.boton--linea {
+  --fondo: transparent;
+  --texto: var(--ciruela-700);
+  --borde: var(--linea);
+  --fondo: var(--carton);
+  &:hover {
+    --borde: var(--ciruela-700);
+    --fondo: var(--carton);
+  }
+}
+
+.boton--hilo {
+  --fondo: transparent;
+  --texto: var(--menta-200);
+  --borde: color-mix(in srgb, var(--menta-200) 50%, transparent);
+  &:hover {
+    --fondo: rgb(255 255 255 / 0.07);
+    --borde: var(--menta-200);
+  }
+}
+
+.boton--ancho {
+  width: 100%;
+}
+
+// Campos
+.campo {
+  display: grid;
+  gap: 6px;
+
+  label,
+  .campo__titulo {
+    font-weight: 650;
+    font-size: 0.875rem;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.6em 0.75em;
+    border: 1.5px solid var(--linea);
+    border-radius: var(--radio);
+    background: var(--carton);
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &::placeholder {
+      color: var(--tinta-3);
+    }
+    &:hover {
+      border-color: var(--ciruela-300);
+    }
+    &:focus {
+      outline: none;
+      border-color: var(--ciruela-700);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--magenta-500) 18%, transparent);
+    }
+  }
+
+  textarea {
+    min-height: 88px;
+    resize: vertical;
+  }
+}
+
+.campo__ayuda {
+  color: var(--tinta-3);
+  font-size: 0.8125rem;
+}
+
+// Migas
+.migas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+
+  li + li::before {
+    content: '/';
+    margin-right: 0.35em;
+    opacity: 0.55;
+  }
+  a {
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Campo oscuro (pie, "cómo pedir")
+.cinta {
+  background-color: var(--ciruela-800);
+  color: var(--menta-200);
+}
+
+// Campo claro (portada, encabezados de página)
+.lienzo {
+  background-color: var(--menta-100);
+  background-image: radial-gradient(circle at 1px 1px, rgb(43 179 131 / 0.22) 1px, transparent 1.5px);
+  background-size: 18px 18px;
+  color: var(--tinta);
+}
+
+// ——— Transiciones entre páginas (View Transitions) ———
+// La página sale rápido y entra con un leve ascenso; la cabecera no se mueve.
+// La foto del producto viaja de la tarjeta a la ficha (view-transition-name: foto-<id>).
+::view-transition-old(root) {
+  animation: vt-sale 0.16s ease-in both;
+}
+::view-transition-new(root) {
+  animation: vt-entra 0.34s var(--salida) both;
+}
+::view-transition-group(.foto) {
+  animation-duration: 0.45s;
+  animation-timing-function: var(--salida);
+}
+::view-transition-old(.foto),
+::view-transition-new(.foto) {
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes vt-sale {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-entra {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.vt-foto {
+  view-transition-class: foto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.12s !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Enlace "saltar al contenido": visible solo con teclado
+.solo-lectores:focus-visible {
+  position: fixed !important;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 10px 16px;
+  clip: auto;
+  background: var(--carton);
+  color: var(--ciruela-800);
+  font-weight: 700;
+}
+
+// Selector de cantidad: magenta porque marca lo que ya está en el pedido
+.paso {
+  display: grid;
+  grid-template-columns: 44px minmax(32px, 1fr) 44px;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  border-radius: var(--radio);
+  background: var(--magenta-500);
+  color: #fff;
+
+  button {
+    display: grid;
+    place-items: center;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radio);
+    background: transparent;
+    color: inherit;
+
+    &:hover {
+      background: var(--magenta-600);
+    }
+    &:focus-visible {
+      outline-color: #fff;
+      outline-offset: -4px;
+    }
+  }
+
+  output {
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+}
+
+// Encabezado de páginas internas
+.encabezado-pagina {
+  padding-block: 28px 36px;
+
+  .migas {
+    color: var(--tinta-2);
+  }
+
+  h1 {
+    margin-top: 10px;
+    font-size: clamp(2.5rem, 6vw, 4.25rem);
+    color: var(--ciruela-800);
+  }
+}

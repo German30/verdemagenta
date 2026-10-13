@@ -1,0 +1,57 @@
+<div class="barra contenedor">
+  <a class="logo" routerLink="/" aria-label="Verdemagenta, inicio">
+    <app-marca />
+  </a>
+
+  <nav class="nav" aria-label="Principal">
+    <ul>
+      @for (e of enlaces; track e.texto) {
+        <li>
+          @if (e.fragmento) {
+            <a [routerLink]="e.ruta" [fragment]="e.fragmento">{{ e.texto }}</a>
+          } @else {
+            <a [routerLink]="e.ruta" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }"
+              ariaCurrentWhenActive="page">{{ e.texto }}</a>
+          }
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <a class="boton-pedido" routerLink="/pedido" routerLinkActive="activo" ariaCurrentWhenActive="page">
+    @for (n of [pedido.piezas()]; track n) {
+      <app-icono nombre="pedido" animate.enter="salta" />
+    }
+    <span class="texto">Pedido</span>
+    @if (pedido.piezas() > 0) {
+      <span class="cuenta cifra" aria-hidden="true">
+        @for (n of [pedido.piezas()]; track n) {
+          <span class="digito" animate.enter="entra">{{ n }}</span>
+        }
+      </span>
+      <span class="total cifra">{{ pedido.total() | precio }}</span>
+      <span class="solo-lectores">: {{ pedido.piezas() }} {{ pedido.piezas() === 1 ? 'pieza' : 'piezas' }}</span>
+    }
+  </a>
+
+  <button type="button" class="menu" [attr.aria-expanded]="abierto()" aria-controls="menu-movil"
+    (click)="abierto.set(!abierto())">
+    <app-icono [nombre]="abierto() ? 'cerrar' : 'menu'" />
+    <span class="solo-lectores">{{ abierto() ? 'Cerrar menú' : 'Abrir menú' }}</span>
+  </button>
+</div>
+
+@if (abierto()) {
+<nav id="menu-movil" class="movil" aria-label="Principal" animate.enter="despliega" animate.leave="pliega">
+  <ul class="contenedor">
+    @for (e of enlaces; track e.texto) {
+      <li>
+        <a [routerLink]="e.ruta" [fragment]="e.fragmento" (click)="abierto.set(false)">
+          {{ e.texto }}
+          <app-icono nombre="flecha" />
+        </a>
+      </li>
+    }
+  </ul>
+</nav>
+}

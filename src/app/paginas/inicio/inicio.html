@@ -1,0 +1,175 @@
+<!-- Portada: abanico de muestras -->
+<section class="portada lienzo" aria-labelledby="titulo-portada">
+  <div class="contenedor portada__rejilla">
+    <div class="portada__texto">
+      <h1 id="titulo-portada" class="rotulo">Elige el color.<br /><em>Pídelo por WhatsApp.</em></h1>
+      <p class="portada__intro">
+        @if (catalogo.estado() === 'listo') {
+          Rollos de trapillo en <strong>{{ totalColores() }} colores</strong> y
+          <strong>{{ catalogo.grosores().length }} grosores</strong>, desde
+          <strong class="cifra">{{ desde() | precio }}</strong>. Arma tu pedido aquí y lo confirmamos contigo por WhatsApp.
+        } @else {
+          Rollos de trapillo por color y por grosor. Arma tu pedido aquí y lo confirmamos contigo por WhatsApp.
+        }
+      </p>
+      <div class="portada__acciones">
+        <a class="boton" routerLink="/tienda">Ver la carta de colores <app-icono nombre="flecha" /></a>
+        <a class="boton boton--linea" routerLink="/" fragment="como-pedir">Cómo pedir</a>
+      </div>
+    </div>
+
+    <nav class="abanico" aria-label="Algunos colores del catálogo">
+      @if (abanico().length) {
+        @for (c of abanico(); track c.producto.id; let i = $index) {
+          <a class="ficha" [routerLink]="['/producto', c.producto.id]" [style.--giro]="c.giro + 'deg'" [style.--i]="i">
+            <span class="ficha__pie">
+              <strong>{{ c.producto.titulo }}</strong>
+              <span class="cifra">{{ c.producto.precio | precio }}</span>
+            </span>
+            <span class="ficha__color" [style.background]="c.fondo"></span>
+          </a>
+        }
+      } @else {
+        @for (g of abanicoVacio; track $index) {
+          <span class="ficha ficha--vacia" [style.--giro]="g + 'deg'" [style.--i]="$index"></span>
+        }
+      }
+    </nav>
+  </div>
+</section>
+
+@if (catalogo.estado() === 'error') {
+  <div class="contenedor">
+    <div class="falla" role="alert">
+      <p><strong>No pudimos cargar el catálogo.</strong> Revisa tu conexión e inténtalo de nuevo.</p>
+      <button type="button" class="boton boton--linea" (click)="catalogo.cargar()">
+        <app-icono nombre="recargar" /> Reintentar
+      </button>
+    </div>
+  </div>
+}
+
+<!-- Grosores a escala -->
+<section id="grosores" class="contenedor bloque" aria-labelledby="titulo-grosores">
+  <div class="encabezado">
+    <h2 id="titulo-grosores" class="rotulo">Cinco grosores, a escala</h2>
+    <p>Cada tira está dibujada a su ancho real en proporción con las demás. Más delgada para bolsos y cestos finos; la Jumbo para tapetes y puffs.</p>
+  </div>
+
+  <ul class="grosores" appRevelar="0.35">
+    @for (g of grosores(); track g.id) {
+      <li [style.--ancho]="g.ancho" [style.--i]="$index">
+        <a class="grosor" routerLink="/tienda" [queryParams]="{ grosor: g.id }">
+          <span class="grosor__tira" [style.background]="g.fondo" aria-hidden="true"></span>
+          <span class="grosor__datos">
+            <span class="sello">{{ g.nombre }}</span>
+            <span class="grosor__cuenta">{{ g.colores }} {{ g.colores === 1 ? 'color' : 'colores' }}</span>
+            <span class="grosor__precio cifra">desde {{ g.desde | precio }}</span>
+          </span>
+        </a>
+      </li>
+    }
+  </ul>
+</section>
+
+<!-- Acabados especiales -->
+@if (especiales().length) {
+  <section class="contenedor bloque" aria-labelledby="titulo-especiales">
+    <div class="encabezado encabezado--fila">
+      <h2 id="titulo-especiales" class="rotulo">Metálicos, polipiel y estampados</h2>
+      <a class="enlace-flecha" routerLink="/tienda" [queryParams]="{ acabado: 'Metálico,Polipiel,Estampado,Neón,Texturizado' }">
+        Ver todos los acabados <app-icono nombre="flecha" />
+      </a>
+    </div>
+    <div class="rejilla-etiquetas">
+      @for (p of especiales(); track p.id) {
+        <app-etiqueta [producto]="p" />
+      }
+    </div>
+  </section>
+}
+
+<!-- Carta de colores -->
+<section id="carta" class="carta" aria-labelledby="titulo-carta">
+  <div class="contenedor">
+    <div class="encabezado encabezado--fila">
+      <h2 id="titulo-carta" class="rotulo">La carta completa</h2>
+      <p>{{ totalColores() }} colores. Pasa por un lomo para ver en qué grosores viene; tócalo para ver los rollos.</p>
+    </div>
+
+    <div class="carta__familias">
+      @for (grupo of carta(); track grupo.familia.id) {
+        @if (grupo.colores.length) {
+          <div class="familia" appRevelar="0.3">
+            <h3 class="familia__nombre">{{ grupo.familia.nombre }} <span class="cifra">{{ grupo.colores.length }}</span></h3>
+            <ul class="lomos">
+              @for (c of grupo.colores; track c.color; let i = $index) {
+                <li [style.--i]="i">
+                  <a class="lomo" routerLink="/tienda" [queryParams]="{ color: c.color }"
+                    [style.background]="c.fondo" [style.color]="c.tinta">
+                    <span class="lomo__nombre">{{ c.color }}</span>
+                    <span class="lomo__frente">
+                      <strong>{{ c.color }}</strong>
+                      <span>{{ c.grosores }}</span>
+                      <span class="cifra">desde {{ c.desde }}</span>
+                    </span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Cómo pedir -->
+<section id="como-pedir" class="pedir cinta" aria-labelledby="titulo-pedir">
+  <div class="contenedor pedir__rejilla">
+    <div>
+      <h2 id="titulo-pedir" class="rotulo">Tu pedido llega a WhatsApp ya escrito</h2>
+      <ol class="pasos">
+        <li>
+          <strong>Elige colores y grosor.</strong>
+          Agrega los rollos que necesites desde la tienda o la carta de colores.
+        </li>
+        <li>
+          <strong>Revisa tu pedido.</strong>
+          Ajusta cantidades y, si quieres, deja tu nombre y dónde lo recibes.
+        </li>
+        <li>
+          <strong>Envíalo por WhatsApp.</strong>
+          Se abre el chat con la lista y el total. Ahí confirmamos existencias, envío y forma de pago.
+        </li>
+      </ol>
+      <a class="boton boton--carton" routerLink="/tienda">Empezar mi pedido <app-icono nombre="flecha" /></a>
+    </div>
+
+    @if (ejemplo()) {
+      <figure class="chat">
+        <figcaption>Así se ve el mensaje (ejemplo)</figcaption>
+        <div class="chat__burbuja" appRevelar="0.4">
+          @for (linea of ejemploLineas(); track $index) {
+            <span class="chat__linea" [style.--i]="$index">{{ linea || ' ' }}</span>
+          }
+        </div>
+      </figure>
+    }
+  </div>
+</section>
+
+<!-- Accesorios -->
+@if (accesorios().length) {
+  <section class="contenedor bloque accesorios" aria-labelledby="titulo-accesorios">
+    <div class="encabezado">
+      <h2 id="titulo-accesorios" class="rotulo">Para terminar tu bolso</h2>
+      <p>Aros retráctiles dorados: se abren y cierran las veces que haga falta.</p>
+    </div>
+    <div class="rejilla-etiquetas rejilla-etiquetas--corta">
+      @for (p of accesorios(); track p.id) {
+        <app-etiqueta [producto]="p" />
+      }
+    </div>
+  </section>
+}

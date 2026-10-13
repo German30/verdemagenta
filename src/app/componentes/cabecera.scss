@@ -1,0 +1,207 @@
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: block;
+  view-transition-name: cabecera;
+  background: rgb(255 255 255 / 0.92);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--linea);
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2.5vw, 32px);
+  min-height: var(--cabecera);
+}
+
+.logo {
+  display: inline-flex;
+  text-decoration: none;
+  flex: none;
+}
+
+.nav {
+  flex: 1;
+
+  ul {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: var(--radio);
+    color: var(--tinta-2);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: background-color 0.15s, color 0.15s;
+
+    &:hover {
+      background: var(--menta-100);
+      color: var(--ciruela-800);
+    }
+
+    &.activo {
+      color: var(--ciruela-800);
+      text-decoration: underline;
+      text-decoration-color: var(--magenta-500);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 7px;
+    }
+  }
+}
+
+.boton-pedido {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 14px 6px 12px;
+  margin-left: auto;
+  border-radius: var(--radio);
+  background: var(--ciruela-700);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.15s;
+
+  &:hover,
+  &.activo {
+    background: var(--ciruela-800);
+  }
+}
+
+.cuenta {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding-inline: 6px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--magenta-500);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 800;
+
+  .digito {
+    grid-area: 1 / 1;
+  }
+}
+
+// Cifra que cruza como en un contador: entra desde abajo, sin saltos de ancho.
+.entra {
+  animation: cifra 0.42s var(--salida);
+}
+
+@keyframes cifra {
+  from {
+    transform: translateY(70%);
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
+.total {
+  font-weight: 650;
+  font-size: 0.9rem;
+  color: var(--menta-200);
+}
+
+.menu {
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--ciruela-800);
+}
+
+.movil {
+  border-top: 1px solid var(--linea);
+
+  ul {
+    margin: 0;
+    padding-block: 8px 16px;
+    list-style: none;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--linea-suave);
+    color: var(--ciruela-800);
+    font-size: 1.1rem;
+    font-weight: 650;
+    text-decoration: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .nav {
+    display: none;
+  }
+  .menu {
+    display: grid;
+  }
+  .boton-pedido {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 479px) {
+  .boton-pedido .texto,
+  .boton-pedido .total {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .movil {
+    display: none;
+  }
+}
+
+// La bolsa se sacude levemente cuando cambia la cantidad del pedido
+.salta {
+  animation: salta 0.5s var(--salida);
+}
+
+@keyframes salta {
+  30% {
+    transform: translateY(-4px) rotate(-10deg);
+  }
+  60% {
+    transform: translateY(0) rotate(6deg);
+  }
+}
+
+// Menú móvil: se despliega de arriba abajo y se pliega más rápido
+.despliega {
+  animation: despliega 0.32s var(--salida);
+}
+.pliega {
+  animation: despliega 0.18s ease-in reverse both;
+}
+
+@keyframes despliega {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}

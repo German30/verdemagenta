@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-05T23:30:00Z",
+  "title": "Design System: Verdemagenta",
+  "extensions": {
+    "colorMeta": {
+      "verde-botella": { "role": "primary", "displayName": "Verde Botella", "tonalRamp": ["#e4efe7", "#cfe5d8", "#9cc7b0", "#2f7a5a", "#1f4d3a", "#173f2f", "#10301f", "#0b2219"] },
+      "magenta": { "role": "secondary", "displayName": "Magenta", "tonalRamp": ["#fbe3ee", "#f39bc4", "#d6247a", "#c2186c", "#a3115a"] },
+      "suelo": { "role": "neutral", "displayName": "Suelo" },
+      "carton": { "role": "neutral", "displayName": "Cartón" },
+      "tinta": { "role": "neutral", "displayName": "Tinta" },
+      "cordel": { "role": "neutral", "displayName": "Cordel" }
+    },
+    "typographyMeta": {
+      "rotulo": { "displayName": "Rótulo", "purpose": "Archivo a wdth 62, mayúsculas: titulares y nombres de color." },
+      "sello": { "displayName": "Sello de talla", "purpose": "Grosores, siempre con borde de 1.5px." },
+      "cuerpo": { "displayName": "Cuerpo", "purpose": "Texto corrido y controles a wdth 100." }
+    },
+    "shadows": [
+      { "name": "sombra-etiqueta", "value": "drop-shadow(0 1px 1px rgb(16 48 31 / 0.14)) drop-shadow(0 8px 14px rgb(16 48 31 / 0.14))", "purpose": "Cartón colgante con máscara y recorte." },
+      { "name": "sombra-panel", "value": "0 1px 2px rgb(16 48 31 / 0.08), 0 12px 32px -8px rgb(16 48 31 / 0.22)", "purpose": "Paneles flotantes, avisos y vitrina." }
+    ],
+    "motion": [
+      { "name": "salida", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Easing exponencial de salida para todo cambio de estado." },
+      { "name": "mecer", "value": "1.3s pendulum, 7° → −4.5° → 2.4° → −1° → 0", "purpose": "La etiqueta se mece al agregarla al pedido." },
+      { "name": "vaiven", "value": "5.6s ease-in-out infinite alternate, ±1.6°", "purpose": "Vaivén del cordel de portada." },
+      { "name": "cifra", "value": "0.42s, translateY(70%) + blur(2px) → 0", "purpose": "Cifras del contador que entran sin saltar." }
+    ],
+    "breakpoints": [
+      { "name": "movil", "value": "640px" },
+      { "name": "tableta", "value": "960px" },
+      { "name": "escritorio", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Sello de talla",
+      "kind": "chip",
+      "refersTo": "sello",
+      "description": "Marca de grosor en etiquetas, filtros y ficha.",
+      "html": "<span class=\"ds-sello\">3 cm</span>",
+      "css": ".ds-sello{display:inline-flex;padding:.2em .45em .16em;border:1.5px solid currentColor;border-radius:2px;font:800 .8125rem/1 Archivo,sans-serif;font-variation-settings:'wdth' 62;text-transform:uppercase;letter-spacing:.04em;color:#1f4d3a}"
+    },
+    {
+      "name": "Botón de pedido",
+      "kind": "button",
+      "refersTo": "button-pedido",
+      "description": "Agregar al pedido o enviarlo por WhatsApp; el único botón magenta.",
+      "html": "<button class=\"ds-pedido\">Enviar pedido por WhatsApp</button>",
+      "css": ".ds-pedido{min-height:46px;padding:.7em 1.25em;border:0;border-radius:3px;background:#d6247a;color:#fff;font:700 .975rem Archivo,sans-serif}.ds-pedido:hover{background:#c2186c}"
+    },
+    {
+      "name": "Etiqueta colgante",
+      "kind": "card",
+      "refersTo": "etiqueta",
+      "description": "Contenedor de producto: cartón achaflanado con ojal perforado.",
+      "html": "<div class=\"ds-etiqueta\"><b>AZUL REY</b><span>$160</span></div>",
+      "css": ".ds-etiqueta{display:grid;gap:8px;width:180px;padding:48px 18px 18px;background:#fcfcf8;clip-path:polygon(16px 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%,0 16px);-webkit-mask:radial-gradient(circle at 50% 24px,transparent 6.5px,#000 7px);mask:radial-gradient(circle at 50% 24px,transparent 6.5px,#000 7px);filter:drop-shadow(0 8px 14px rgb(16 48 31/.14));font-family:Archivo,sans-serif}.ds-etiqueta b{font-size:1.45rem;font-variation-settings:'wdth' 62}"
+    }
+  ],
+  "narrative": {
+    "northStar": "La etiqueta colgante",
+    "overview": "Catálogo de trapillo tratado como prendas en un perchero: etiquetas de cartón con ojal y cordel, sellos de talla para el grosor y cinta tejida verde como campo. El color del producto se ve antes que el texto, y todo termina en un mensaje de WhatsApp.",
+    "keyCharacteristics": ["Campos Verde Botella con trama", "Cartón achaflanado con ojal", "Archivo angosta en mayúsculas", "Magenta reservado al pedido", "Rollos SVG cuyo largo es el ancho real"],
+    "rules": [
+      { "name": "La regla del magenta reservado", "body": "El magenta solo marca lo elegido o lo que se envía.", "section": "colors" },
+      { "name": "La regla del sello", "body": "Todo grosor va dentro de un sello de talla.", "section": "typography" },
+      { "name": "La regla de las cifras", "body": "Precios y cantidades con cifras tabulares.", "section": "typography" }
+    ],
+    "dos": ["Mostrar el color como rollo o lomo antes que el texto", "Cerrar cada camino en el pedido o en WhatsApp"],
+    "donts": ["Magenta en botones de navegación", "Inventar existencias, envíos o reseñas", "Texto gris sobre verde"]
+  }
+}

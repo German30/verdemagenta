@@ -1,0 +1,40 @@
+@let p = producto();
+<app-foto class="muestra vt-foto" [producto]="p" [style.--color]="p.muestra.base"
+  [style.view-transition-name]="'foto-' + p.id" />
+
+<div class="datos">
+  <h3 class="titulo rotulo">
+    <a class="enlace" [routerLink]="['/producto', p.id]">{{ p.titulo }}</a>
+  </h3>
+  <div class="marcas">
+    @if (grosor(); as g) {
+      <span class="sello">{{ g.nombre }}</span>
+    } @else {
+      <span class="sello">Accesorio</span>
+    }
+    @if (acabadoVisible(); as a) {
+      <span class="acabado">{{ a }}</span>
+    }
+  </div>
+  <p class="precio cifra">{{ p.precio | precio }}</p>
+</div>
+
+<div class="acciones">
+  @if (enPedido() > 0) {
+    <div class="paso" role="group" [attr.aria-label]="'Cantidad de ' + p.titulo + ' en tu pedido'">
+      <button type="button" (click)="pedido.fijar(p.id, enPedido() - 1)"
+        [attr.aria-label]="enPedido() === 1 ? 'Quitar ' + p.titulo + ' del pedido' : 'Uno menos'">
+        <app-icono [nombre]="enPedido() === 1 ? 'quitar' : 'menos'" />
+      </button>
+      <output class="cifra" aria-live="polite">{{ enPedido() }}</output>
+      <button type="button" (click)="pedido.agregar(p)" aria-label="Uno más">
+        <app-icono nombre="mas" />
+      </button>
+    </div>
+  } @else {
+    <button type="button" class="agregar" (click)="pedido.agregar(p)">
+      <app-icono nombre="mas" />
+      Agregar <span class="solo-lectores">{{ p.titulo }} {{ grosor()?.nombre }}</span>
+    </button>
+  }
+</div>

@@ -1,0 +1,134 @@
+@switch (catalogo.estado()) {
+  @case ('cargando') {
+    <div class="contenedor espera" aria-busy="true">Cargando producto…</div>
+  }
+  @case ('error') {
+    <div class="contenedor espera" role="alert">
+      <p>No pudimos cargar el catálogo.</p>
+      <button type="button" class="boton" (click)="catalogo.cargar()"><app-icono nombre="recargar" /> Reintentar</button>
+    </div>
+  }
+  @default {
+    @if (producto(); as p) {
+      <div class="lienzo franja">
+        <div class="contenedor">
+          <ol class="migas">
+            <li><a routerLink="/">Inicio</a></li>
+            <li>
+              @if (grosor(); as g) {
+                <a routerLink="/tienda" [queryParams]="{ grosor: g.id }">Trapillo {{ g.nombre }}</a>
+              } @else {
+                <a routerLink="/tienda" [queryParams]="{ grosor: 'accesorios' }">Accesorios</a>
+              }
+            </li>
+            <li aria-current="page">{{ p.titulo }}</li>
+          </ol>
+        </div>
+      </div>
+
+      <article class="contenedor ficha">
+        <div class="vitrina" [style.--color]="p.muestra.base">
+          <app-foto class="vitrina__foto vt-foto" [producto]="p" [style.view-transition-name]="'foto-' + p.id" tamanos="(max-width: 859px) 100vw, 600px" [prioridad]="true" />
+          @if (!p.foto) {
+            <span class="vitrina__nota">Color aproximado en pantalla</span>
+          }
+        </div>
+
+        <div class="detalle">
+          <h1 class="rotulo">{{ p.titulo }}</h1>
+          <p class="subtitulo">
+            {{ p.linea ?? 'Accesorio' }}
+            @if (grosor(); as g) { · {{ g.nombre }} de ancho }
+            @if (p.acabado && p.acabado !== 'Liso') { · {{ p.acabado }} }
+          </p>
+
+          <p class="precio cifra">{{ p.precio | precio }} <span>MXN</span></p>
+
+          @if (p.descripcion) {
+            <p class="descripcion">{{ p.descripcion }}</p>
+          }
+
+          @if (variantes().length) {
+            <fieldset class="variantes">
+              <legend>Grosor</legend>
+              <div class="variantes__lista">
+                @for (v of variantes(); track v.grosor.id) {
+                  @if (v.producto; as vp) {
+                    <a class="variante" [routerLink]="['/producto', vp.id]" [class.actual]="vp.id === p.id"
+                      [attr.aria-current]="vp.id === p.id ? 'true' : null">
+                      <span class="sello">{{ v.grosor.nombre }}</span>
+                      <span class="cifra">{{ vp.precio | precio }}</span>
+                    </a>
+                  } @else {
+                    <span class="variante agotada" [attr.aria-label]="v.grosor.nombre + ': no viene en este color'">
+                      <span class="sello">{{ v.grosor.nombre }}</span>
+                      <span>No viene</span>
+                    </span>
+                  }
+                }
+              </div>
+            </fieldset>
+          }
+
+          <div class="compra">
+            <div class="contador" role="group" aria-label="Cantidad">
+              <button type="button" (click)="cambiar(-1)" [disabled]="cantidad() <= 1" aria-label="Uno menos">
+                <app-icono nombre="menos" />
+              </button>
+              <output class="cifra" aria-live="polite">{{ cantidad() }}</output>
+              <button type="button" (click)="cambiar(1)" [disabled]="cantidad() >= 99" aria-label="Uno más">
+                <app-icono nombre="mas" />
+              </button>
+            </div>
+            <button type="button" class="boton boton--pedido agregar" [class.hecho]="agregado()" (click)="agregar()">
+              @if (agregado()) {
+                <span class="agregar__texto" animate.enter="cambia"><app-icono nombre="listo" /> Agregado al pedido</span>
+              } @else {
+                <span class="agregar__texto" animate.enter="cambia">
+                  <app-icono nombre="pedido" /> Agregar al pedido · <span class="cifra">{{ p.precio * cantidad() | precio }}</span>
+                </span>
+              }
+            </button>
+          </div>
+
+          @if (enPedido()) {
+            <p class="ya">
+              <app-icono nombre="listo" />
+              Llevas <strong class="cifra">{{ enPedido() }}</strong> en tu pedido.
+              <a routerLink="/pedido">Ver pedido</a>
+            </p>
+          }
+
+          <a class="boton boton--linea consulta" [href]="consulta()" target="_blank" rel="noopener">
+            <app-icono nombre="whatsapp" /> Preguntar por este color
+          </a>
+        </div>
+      </article>
+
+      @if (vecinos().length > 1) {
+        <section class="contenedor muestrario" aria-labelledby="titulo-vecinos">
+          <h2 id="titulo-vecinos" class="rotulo">
+            @if (grosor(); as g) { Otros colores en {{ g.nombre }} } @else { Otros accesorios }
+          </h2>
+          <ul class="lomos" tabindex="0" aria-label="Colores">
+            @for (v of vecinos(); track v.producto.id) {
+              <li>
+                <a class="lomo" [routerLink]="['/producto', v.producto.id]" [class.actual]="v.producto.id === p.id"
+                  [attr.aria-current]="v.producto.id === p.id ? 'page' : null"
+                  [style.background]="v.fondo" [style.color]="v.tinta" [attr.title]="v.producto.titulo">
+                  <span>{{ v.producto.titulo }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    } @else {
+      <div class="contenedor espera">
+        <h1 class="rotulo">Ese producto ya no está</h1>
+        <p>Puede que haya cambiado de nombre o que ya no lo manejemos.</p>
+        <a class="boton" routerLink="/tienda">Ir a la tienda</a>
+      </div>
+    }
+  }
+}

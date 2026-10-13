@@ -1,0 +1,260 @@
+@let filtros = f();
+
+<header class="lienzo encabezado-pagina">
+  <div class="contenedor">
+    <ol class="migas">
+      <li><a routerLink="/">Inicio</a></li>
+      <li><a routerLink="/tienda">Tienda</a></li>
+      @if (titulo() !== 'Tienda') {
+        <li aria-current="page">{{ titulo() }}</li>
+      }
+    </ol>
+    <h1 class="rotulo">{{ titulo() }}</h1>
+  </div>
+</header>
+
+<ng-template #panel let-s>
+  <div class="filtros">
+    <form class="campo" role="search" (submit)="$event.preventDefault()">
+      <label [for]="'q-' + s">Buscar</label>
+      <div class="buscar">
+        <app-icono nombre="buscar" />
+        <input [id]="'q-' + s" type="search" placeholder="Color o producto" [value]="filtros.q"
+          (input)="ir({ q: $any($event.target).value || null })" autocomplete="off" />
+      </div>
+    </form>
+
+    <fieldset>
+      <legend>Grosor</legend>
+      <div class="opciones">
+        <label class="opcion">
+          <input type="radio" [name]="'grosor-' + s" [checked]="!filtros.grosor" (change)="ir({ grosor: null })" />
+          <span>Todos</span>
+          <span class="cuenta cifra">{{ catalogo.productos().length }}</span>
+        </label>
+        @for (g of catalogo.grosores(); track g.id) {
+          <label class="opcion">
+            <input type="radio" [name]="'grosor-' + s" [checked]="filtros.grosor === g.id" (change)="ir({ grosor: g.id })" />
+            <span class="sello">{{ g.nombre }}</span>
+            <span class="cuenta cifra">{{ conteoGrosor().get(g.id) ?? 0 }}</span>
+          </label>
+        }
+        <label class="opcion">
+          <input type="radio" [name]="'grosor-' + s" [checked]="filtros.grosor === 'accesorios'"
+            (change)="ir({ grosor: 'accesorios' })" />
+          <span>Accesorios</span>
+          <span class="cuenta cifra">{{ conteoGrosor().get('accesorios') ?? 0 }}</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Gama de color</legend>
+      <div class="gamas">
+        @for (fam of catalogo.familias(); track fam.id) {
+          <button type="button" class="gama" [attr.aria-pressed]="filtros.familias.includes(fam.id)"
+            (click)="alternar('familia', fam.id)">
+            <span class="gama__muestra" [class.gama__muestra--estampado]="fam.id === 'estampados'"
+              [style.background]="fam.muestra" aria-hidden="true"></span>
+            {{ fam.nombre }}
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Acabado</legend>
+      <div class="opciones">
+        @for (a of acabados; track a) {
+          <label class="opcion">
+            <input type="checkbox" [checked]="filtros.acabados.includes(a)" (change)="alternar('acabado', a)" />
+            <span>{{ a }}</span>
+            <span class="cuenta cifra">{{ conteoAcabado().get(a) ?? 0 }}</span>
+          </label>
+        }
+      </div>
+    </fieldset>
+
+    <form class="precio" (submit)="precio($event)">
+      <fieldset>
+        <legend>Precio</legend>
+        <div class="precio__campos">
+          <div class="campo">
+            <label [for]="'min-' + s">Mínimo</label>
+            <input [id]="'min-' + s" name="min" type="number" inputmode="numeric" min="0" step="10" placeholder="$0"
+              [value]="filtros.min ?? ''" />
+          </div>
+          <div class="campo">
+            <label [for]="'max-' + s">Máximo</label>
+            <input [id]="'max-' + s" name="max" type="number" inputmode="numeric" min="0" step="10" placeholder="$800"
+              [value]="filtros.max ?? ''" />
+          </div>
+        </div>
+        <button type="submit" class="boton boton--linea boton--ancho">Filtrar por precio</button>
+      </fieldset>
+    </form>
+
+    @if (activos()) {
+      <button type="button" class="limpiar" (click)="limpiar()">
+        <app-icono nombre="cerrar" /> Quitar filtros ({{ activos() }})
+      </button>
+    }
+  </div>
+</ng-template>
+
+<div class="contenedor diseno">
+  <aside class="lateral" aria-label="Filtros">
+    <ng-container [ngTemplateOutlet]="panel" [ngTemplateOutletContext]="{ $implicit: 'a' }" />
+  </aside>
+
+  <section class="resultados" #resultados aria-labelledby="conteo">
+    <div class="barra">
+      <button type="button" class="boton boton--linea solo-movil" (click)="abrirFiltros()">
+        <app-icono nombre="filtros" /> Filtros
+        @if (activos()) {
+          <span class="insignia cifra">{{ activos() }}</span>
+        }
+      </button>
+
+      <p id="conteo" class="conteo" aria-live="polite">
+        @if (catalogo.estado() === 'listo') {
+          @if (rango().total) {
+            Mostrando <span class="cifra">{{ rango().desde }}–{{ rango().hasta }}</span> de
+            <span class="cifra">{{ rango().total }}</span> {{ rango().total === 1 ? 'resultado' : 'resultados' }}
+          } @else {
+            Sin resultados
+          }
+        } @else if (catalogo.estado() === 'cargando') {
+          Cargando catálogo…
+        }
+      </p>
+
+      <div class="barra__controles">
+        <label class="solo-lectores" for="orden">Ordenar</label>
+        <select id="orden" class="orden" [value]="filtros.orden" (change)="ir({ orden: $any($event.target).value || null })">
+          @for (o of ordenes; track o.id) {
+            <option [value]="o.id" [selected]="o.id === filtros.orden">{{ o.nombre }}</option>
+          }
+        </select>
+        <div class="vistas" role="group" aria-label="Vista">
+          <button type="button" [attr.aria-pressed]="filtros.vista === 'cuadricula'" (click)="ir({ vista: null }, true)"
+            aria-label="Cuadrícula">
+            <app-icono nombre="cuadricula" />
+          </button>
+          <button type="button" [attr.aria-pressed]="filtros.vista === 'lista'" (click)="ir({ vista: 'lista' }, true)"
+            aria-label="Lista">
+            <app-icono nombre="lista" />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    @if (filtros.color) {
+      <p class="chip-filtro">
+        Color: <strong>{{ filtros.color }}</strong>
+        <button type="button" (click)="ir({ color: null })" [attr.aria-label]="'Quitar color ' + filtros.color">
+          <app-icono nombre="cerrar" />
+        </button>
+      </p>
+    }
+
+    @switch (catalogo.estado()) {
+      @case ('cargando') {
+        <div class="rejilla" aria-hidden="true">
+          @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+            <div class="fantasma"></div>
+          }
+        </div>
+      }
+      @case ('error') {
+        <div class="vacio" role="alert">
+          <h2 class="rotulo">No pudimos cargar el catálogo</h2>
+          <p>Revisa tu conexión e inténtalo de nuevo.</p>
+          <button type="button" class="boton" (click)="catalogo.cargar()"><app-icono nombre="recargar" /> Reintentar</button>
+        </div>
+      }
+      @default {
+        @if (!visibles().length) {
+          <div class="vacio">
+            <h2 class="rotulo">Ningún rollo coincide</h2>
+            <p>Prueba con otra gama de color o quita algún filtro.</p>
+            <button type="button" class="boton" (click)="limpiar()">Quitar filtros</button>
+          </div>
+        } @else if (filtros.vista === 'lista') {
+          <ul class="filas">
+            @for (p of visibles(); track p.id; let i = $index) {
+              <li class="fila" [class.elegida]="pedido.cantidad(p.id) > 0" animate.enter="entra" [style.--i]="i">
+                <app-foto class="fila__rollo vt-foto" [producto]="p" [style.view-transition-name]="'foto-' + p.id" tamanos="64px" [sombra]="false" />
+                <div class="fila__nombre">
+                  <a class="rotulo" [routerLink]="['/producto', p.id]">{{ p.titulo }}</a>
+                  <span>{{ p.linea ?? 'Accesorio' }}@if (p.acabado && p.acabado !== 'Liso') { · {{ p.acabado }} }</span>
+                </div>
+                <span class="sello">{{ catalogo.grosor(p.grosor)?.nombre ?? 'Accesorio' }}</span>
+                <span class="fila__precio cifra">{{ p.precio | precio }}</span>
+                @if (pedido.cantidad(p.id) > 0) {
+                  <div class="paso" role="group" [attr.aria-label]="'Cantidad de ' + p.titulo">
+                    <button type="button" (click)="pedido.fijar(p.id, pedido.cantidad(p.id) - 1)" aria-label="Uno menos">
+                      <app-icono [nombre]="pedido.cantidad(p.id) === 1 ? 'quitar' : 'menos'" />
+                    </button>
+                    <output class="cifra">{{ pedido.cantidad(p.id) }}</output>
+                    <button type="button" (click)="pedido.agregar(p)" aria-label="Uno más"><app-icono nombre="mas" /></button>
+                  </div>
+                } @else {
+                  <button type="button" class="boton boton--linea fila__agregar" (click)="pedido.agregar(p)">
+                    <app-icono nombre="mas" /> Agregar<span class="solo-lectores"> {{ p.titulo }}</span>
+                  </button>
+                }
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="rejilla">
+            @for (p of visibles(); track p.id; let i = $index) {
+              <app-etiqueta [producto]="p" animate.enter="entra" [style.--i]="i" />
+            }
+          </div>
+        }
+
+        @if (paginas() > 1) {
+          <nav class="paginacion" aria-label="Páginas">
+            <button type="button" class="paginacion__salto" [disabled]="pagina() === 1" (click)="irPagina(pagina() - 1)">
+              <app-icono nombre="atras" /> <span>Anterior</span>
+            </button>
+            <ol>
+              @for (n of numeros(); track $index) {
+                <li>
+                  @if (n === null) {
+                    <span class="puntos" aria-hidden="true">…</span>
+                  } @else {
+                    <button type="button" class="cifra" [attr.aria-current]="n === pagina() ? 'page' : null"
+                      (click)="irPagina(n)">{{ n }}</button>
+                  }
+                </li>
+              }
+            </ol>
+            <button type="button" class="paginacion__salto" [disabled]="pagina() === paginas()" (click)="irPagina(pagina() + 1)">
+              <span>Siguiente</span> <app-icono nombre="flecha" />
+            </button>
+          </nav>
+        }
+      }
+    }
+  </section>
+</div>
+
+<dialog #dialogo class="hoja" aria-labelledby="titulo-filtros" (click)="$event.target === dialogo && cerrarFiltros()">
+  <div class="hoja__cabeza">
+    <h2 id="titulo-filtros" class="rotulo">Filtros</h2>
+    <button type="button" class="hoja__cerrar" (click)="cerrarFiltros()" aria-label="Cerrar filtros">
+      <app-icono nombre="cerrar" />
+    </button>
+  </div>
+  <div class="hoja__cuerpo">
+    <ng-container [ngTemplateOutlet]="panel" [ngTemplateOutletContext]="{ $implicit: 'd' }" />
+  </div>
+  <div class="hoja__pie">
+    <button type="button" class="boton boton--ancho" (click)="cerrarFiltros()">
+      Ver {{ rango().total }} {{ rango().total === 1 ? 'resultado' : 'resultados' }}
+    </button>
+  </div>
+</dialog>

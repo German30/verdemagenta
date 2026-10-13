@@ -1,0 +1,140 @@
+// Tarjeta de muestrario: el rollo sobre un velo de su propio color.
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radio);
+  background: var(--carton);
+  color: var(--tinta);
+  box-shadow: var(--sombra-tarjeta);
+  transition:
+    box-shadow 0.3s var(--salida),
+    transform 0.3s var(--salida);
+}
+
+:host(:hover) {
+  box-shadow: var(--sombra-alzada);
+  transform: translateY(-3px);
+}
+
+// Foto a 4:5 o, sin foto, el rollo sobre un velo de su color con la misma proporción
+.muestra {
+  aspect-ratio: 4 / 5;
+  background: color-mix(in srgb, var(--color) 16%, #fff);
+
+  ::ng-deep img {
+    transition: transform 0.6s var(--salida);
+  }
+  ::ng-deep app-rollo {
+    width: min(80%, 176px);
+    transition: transform 0.45s var(--salida);
+  }
+}
+
+:host(:hover) .muestra {
+  ::ng-deep img {
+    transform: scale(1.04);
+  }
+  ::ng-deep app-rollo {
+    transform: translateY(-3px) rotate(-3deg);
+  }
+}
+
+:host(.meciendo) .muestra {
+  animation: brinco 0.7s var(--salida);
+}
+
+@keyframes brinco {
+  0% { transform: none; }
+  30% { transform: translateY(-6px) scale(1.02); }
+  60% { transform: translateY(1px); }
+  100% { transform: none; }
+}
+
+.datos {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px 12px;
+}
+
+.titulo {
+  font-size: 1.3rem;
+  color: var(--ciruela-800);
+  overflow-wrap: anywhere;
+}
+
+.enlace {
+  text-decoration: none;
+
+  // toda la tarjeta lleva a la ficha
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      outline: 2.5px solid var(--magenta-500);
+      outline-offset: -3px;
+      border-radius: var(--radio);
+    }
+  }
+}
+
+.marcas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.acabado {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tinta-2);
+}
+
+.precio {
+  font-size: 1.2rem;
+  font-weight: 750;
+}
+
+.acciones {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding: 0 12px 12px;
+}
+
+.agregar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--ciruela-700);
+  font-weight: 700;
+  transition:
+    background-color 0.18s var(--salida),
+    border-color 0.18s var(--salida),
+    color 0.18s var(--salida);
+
+  &:hover {
+    border-color: var(--ciruela-700);
+    background: var(--ciruela-700);
+    color: #fff;
+  }
+}
+
+:host(.elegida) {
+  box-shadow: 0 0 0 2px var(--magenta-500), var(--sombra-tarjeta);
+}
