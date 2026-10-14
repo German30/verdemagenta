@@ -130,5 +130,4 @@ export class Inicio {
 
   protected readonly ejemploLineas = computed(() => this.ejemplo().split('\n'));
 
-  protected readonly accesorios = this.catalogo.accesorios;
 }

@@ -27,7 +27,6 @@ import { Marca } from './marca';
           @for (g of catalogo.grosores(); track g.id) {
             <li><a routerLink="/tienda" [queryParams]="{ grosor: g.id }">{{ g.nombre }}</a></li>
           }
-          <li><a routerLink="/tienda" [queryParams]="{ grosor: 'accesorios' }">Accesorios</a></li>
         </ul>
       </nav>
 

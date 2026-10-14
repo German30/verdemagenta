@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-/** Logotipo provisional: palabra con las dos mitades de la marca. Reemplazar por el logo real. */
+/** Logotipo: el sello de pinceladas (public/logo-*.webp, generado desde resources/Logo.jpg) y la palabra. */
 @Component({
   selector: 'app-marca',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,14 +16,15 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       letter-spacing: -0.02em;
       color: var(--marca-texto, var(--ciruela-800));
     }
-    .punto {
-      width: 22px;
-      height: 22px;
+    img {
+      width: var(--marca-sello, 44px);
+      height: var(--marca-sello, 44px);
       border-radius: 50%;
-      background: conic-gradient(var(--menta-500) 0 50%, var(--magenta-500) 0);
+      background: #fff;
     }
     b { font-weight: inherit; color: var(--marca-acento, var(--magenta-500)); }
   `,
-  template: `<span class="punto" aria-hidden="true"></span><span>verde<b>magenta</b></span>`,
+  template: `<img src="logo-96.webp" srcset="logo-96.webp 1x, logo-192.webp 2x" width="44" height="44" alt="" />
+    <span>verde<b>magenta</b></span>`,
 })
 export class Marca {}

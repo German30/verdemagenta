@@ -159,17 +159,3 @@
   </div>
 </section>
 
-<!-- Accesorios -->
-@if (accesorios().length) {
-  <section class="contenedor bloque accesorios" aria-labelledby="titulo-accesorios">
-    <div class="encabezado">
-      <h2 id="titulo-accesorios" class="rotulo">Para terminar tu bolso</h2>
-      <p>Aros retráctiles dorados: se abren y cierran las veces que haga falta.</p>
-    </div>
-    <div class="rejilla-etiquetas rejilla-etiquetas--corta">
-      @for (p of accesorios(); track p.id) {
-        <app-etiqueta [producto]="p" />
-      }
-    </div>
-  </section>
-}

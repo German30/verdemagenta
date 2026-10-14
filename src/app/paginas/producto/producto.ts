@@ -53,7 +53,7 @@ export class ProductoPagina {
     }));
   });
 
-  /** Otros colores del mismo grosor (o los demás accesorios). */
+
   protected readonly vecinos = computed(() => {
     const p = this.producto();
     if (!p) return [];

@@ -15,7 +15,7 @@ export class CatalogoService {
   readonly familias = computed(() => this.datos()?.familias ?? []);
 
   readonly trapillos = computed(() => this.productos().filter((p) => p.tipo === 'trapillo'));
-  readonly accesorios = computed(() => this.productos().filter((p) => p.tipo === 'accesorio'));
+
 
   /** Un color por nombre (primera aparición), en el orden de la carta. */
   readonly colores = computed(() => {

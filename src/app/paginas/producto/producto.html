@@ -17,8 +17,6 @@
             <li>
               @if (grosor(); as g) {
                 <a routerLink="/tienda" [queryParams]="{ grosor: g.id }">Trapillo {{ g.nombre }}</a>
-              } @else {
-                <a routerLink="/tienda" [queryParams]="{ grosor: 'accesorios' }">Accesorios</a>
               }
             </li>
             <li aria-current="page">{{ p.titulo }}</li>
@@ -108,7 +106,7 @@
       @if (vecinos().length > 1) {
         <section class="contenedor muestrario" aria-labelledby="titulo-vecinos">
           <h2 id="titulo-vecinos" class="rotulo">
-            @if (grosor(); as g) { Otros colores en {{ g.nombre }} } @else { Otros accesorios }
+            @if (grosor(); as g) { Otros colores en {{ g.nombre }} }
           </h2>
           <ul class="lomos" tabindex="0" aria-label="Colores">
             @for (v of vecinos(); track v.producto.id) {

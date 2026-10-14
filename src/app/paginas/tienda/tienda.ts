@@ -83,7 +83,7 @@ export class Tienda {
     const f = this.f();
     const texto = sinTildes(f.q.trim());
     let r = this.catalogo.productos().filter((p) => {
-      if (f.grosor === 'accesorios' ? p.tipo !== 'accesorio' : f.grosor && p.grosor !== f.grosor) return false;
+      if (f.grosor && p.grosor !== f.grosor) return false;
       if (f.familias.length && !f.familias.includes(p.familia ?? '')) return false;
       if (f.acabados.length && !f.acabados.includes(p.acabado ?? '')) return false;
       if (f.color && p.color !== f.color) return false;
@@ -127,7 +127,6 @@ export class Tienda {
   protected readonly titulo = computed(() => {
     const f = this.f();
     if (f.color) return f.color;
-    if (f.grosor === 'accesorios') return 'Accesorios';
     const g = this.catalogo.grosor(f.grosor);
     return g ? `Trapillo ${g.nombre}` : 'Tienda';
   });
