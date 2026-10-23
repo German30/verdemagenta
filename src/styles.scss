@@ -32,7 +32,9 @@
   --linea: #ddd6e1;
   --linea-suave: #ece8ef;
 
-  --fuente: 'Archivo', system-ui, sans-serif;
+  // Fuentes servidas desde el propio sitio (@fontsource en angular.json): sin Google Fonts,
+  // la IP del visitante no sale a terceros y la CSP solo permite 'self'
+  --fuente: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
 
   --radio: 6px;
   --sombra-tarjeta: 0 1px 2px rgb(46 24 56 / 0.06), 0 6px 18px -6px rgb(46 24 56 / 0.14);
@@ -193,6 +195,20 @@ button {
   }
 }
 
+// Grosores sin inventario (4.5 cm y Jumbo): se piden al proveedor al confirmar
+.bajo-pedido {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28em 0.6em;
+  border-radius: 99px;
+  background: var(--magenta-100);
+  color: var(--magenta-700);
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 // Botones
 .boton {
   --fondo: var(--ciruela-700);
@@ -242,6 +258,14 @@ button {
   --fondo: var(--magenta-500);
   &:hover {
     --fondo: var(--magenta-600);
+  }
+}
+
+// Verde WhatsApp, oscurecido para que el texto blanco se lea (contraste 5:1)
+.boton--whatsapp {
+  --fondo: #15803d;
+  &:hover {
+    --fondo: #166534;
   }
 }
 
@@ -354,10 +378,12 @@ button {
 }
 
 // Campo claro (portada, encabezados de página)
+// Crema lino con trama de tela, como una mesa de manualidades: portada y encabezados de página
 .lienzo {
-  background-color: var(--menta-100);
-  background-image: radial-gradient(circle at 1px 1px, rgb(43 179 131 / 0.22) 1px, transparent 1.5px);
-  background-size: 18px 18px;
+  background-color: #f6f0e6;
+  background-image:
+    repeating-linear-gradient(0deg, rgb(120 88 52 / 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(120 88 52 / 0.03) 0 1px, transparent 1px 4px);
   color: var(--tinta);
 }
 

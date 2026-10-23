@@ -31,6 +31,8 @@
               }
             ],
             "styles": [
+              "@fontsource-variable/archivo/wdth.css",
+              "@fontsource/kalam/latin-700.css",
               "src/styles.scss"
             ]
           },
@@ -48,6 +50,11 @@
                   "maximumError": "20kB"
                 }
               ],
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": true, "inlineCritical": false },
+                "fonts": true
+              },
               "outputHashing": "all"
             },
             "development": {

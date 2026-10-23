@@ -106,6 +106,22 @@
   gap: 8px;
 }
 
+.nota-pedido {
+  max-width: 46ch;
+  padding: 12px 14px;
+  border-left: 3px solid var(--magenta-500);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  background: var(--magenta-100);
+  color: var(--tinta);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+
+  .bajo-pedido {
+    margin-right: 4px;
+    background: #fff;
+  }
+}
+
 .variante {
   display: grid;
   justify-items: start;

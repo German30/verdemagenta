@@ -20,7 +20,9 @@ function leer(): Guardado[] {
     const crudo = localStorage.getItem(CLAVE);
     const lista = crudo ? JSON.parse(crudo) : [];
     return Array.isArray(lista)
-      ? lista.filter((l) => Number.isInteger(l?.id) && Number.isInteger(l?.cantidad) && l.cantidad > 0)
+      ? lista
+          .filter((l) => Number.isInteger(l?.id) && Number.isInteger(l?.cantidad) && l.cantidad > 0)
+          .map((l) => ({ id: l.id, cantidad: Math.min(MAXIMO, l.cantidad) }))
       : [];
   } catch {
     return [];

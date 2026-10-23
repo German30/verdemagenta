@@ -27,8 +27,24 @@ export function nombreCorto(p: Producto): string {
 
 export interface DatosCliente {
   nombre: string;
+  correo: string;
+  /** Dirección de entrega completa. */
   entrega: string;
   notas: string;
+}
+
+export type ErroresCliente = Partial<Record<'nombre' | 'correo' | 'entrega', string>>;
+
+const CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/** Nombre, correo y dirección son obligatorios para enviar el pedido. */
+export function erroresCliente(c: DatosCliente): ErroresCliente {
+  const errores: ErroresCliente = {};
+  if (!c.nombre.trim()) errores.nombre = 'Escribe tu nombre.';
+  if (!c.correo.trim()) errores.correo = 'Escribe tu correo electrónico.';
+  else if (!CORREO.test(c.correo.trim())) errores.correo = 'Revisa tu correo, por ejemplo: nombre@gmail.com';
+  if (!c.entrega.trim()) errores.entrega = 'Escribe la dirección de entrega.';
+  return errores;
 }
 
 export function mensajePedido(lineas: LineaPedido[], cliente: DatosCliente): string {
@@ -36,11 +52,16 @@ export function mensajePedido(lineas: LineaPedido[], cliente: DatosCliente): str
   const total = lineas.reduce((s, l) => s + l.cantidad * l.producto.precio, 0);
   const renglones = lineas.map(
     (l) =>
-      `• ${l.cantidad} × ${nombreCorto(l.producto)} (${precio(l.producto.precio)} c/u) = ${precio(l.cantidad * l.producto.precio)}`,
+      `• ${l.cantidad} × ${nombreCorto(l.producto)} (${precio(l.producto.precio)} c/u) = ${precio(l.cantidad * l.producto.precio)}` +
+      (l.producto.bajoPedido ? ' — bajo pedido' : ''),
   );
+  const aviso = lineas.some((l) => l.producto.bajoPedido)
+    ? ['', 'Entiendo que lo marcado *bajo pedido* no está en inventario y se pide al confirmar.']
+    : [];
   const extra = [
     cliente.nombre.trim() && `Nombre: ${cliente.nombre.trim()}`,
-    cliente.entrega.trim() && `Entrega en: ${cliente.entrega.trim()}`,
+    cliente.correo.trim() && `Correo: ${cliente.correo.trim()}`,
+    cliente.entrega.trim() && `Dirección de entrega: ${cliente.entrega.trim()}`,
     cliente.notas.trim() && `Notas: ${cliente.notas.trim()}`,
   ].filter(Boolean);
 
@@ -50,6 +71,7 @@ export function mensajePedido(lineas: LineaPedido[], cliente: DatosCliente): str
     ...renglones,
     '',
     `*Total: ${precio(total)} ${TIENDA.moneda}* (${piezas} ${piezas === 1 ? 'pieza' : 'piezas'})`,
+    ...aviso,
     ...(extra.length ? ['', ...extra] : []),
   ].join('\n');
 }
@@ -60,7 +82,9 @@ export function vistaWhatsApp(texto: string): string {
 }
 
 export function mensajeConsulta(p: Producto): string {
-  return `¡Hola ${TIENDA.nombre}! Me interesa: ${nombreCorto(p)} (${precio(p.precio)}). ¿Lo tienen disponible?`;
+  return p.bajoPedido
+    ? `¡Hola ${TIENDA.nombre}! Me interesa: ${nombreCorto(p)} (${precio(p.precio)}), que es bajo pedido. ¿En cuánto tiempo me llegaría?`
+    : `¡Hola ${TIENDA.nombre}! Me interesa: ${nombreCorto(p)} (${precio(p.precio)}). ¿Lo tienen disponible?`;
 }
 
 export function enlaceWhatsApp(texto: string): string {

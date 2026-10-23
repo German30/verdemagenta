@@ -36,6 +36,7 @@ import { Marca } from './marca';
           <li><a routerLink="/" fragment="como-pedir">Cómo pedir</a></li>
           <li><a routerLink="/pedido">Tu pedido</a></li>
           <li><a routerLink="/" fragment="carta">Carta de colores</a></li>
+          <li><a routerLink="/privacidad">Aviso de privacidad</a></li>
           @if (tienda.correo) {
             <li><a [href]="'mailto:' + tienda.correo">{{ tienda.correo }}</a></li>
           }
@@ -67,7 +68,7 @@ import { Marca } from './marca';
     }
     .firma { display: grid; gap: 18px; justify-items: start; max-width: 42ch; }
     .firma p { color: var(--menta-200); }
-    app-marca { --marca-texto: #fff; --marca-acento: var(--magenta-300); }
+    app-marca { --marca-texto: #fff; }
     h2 { font-size: 1.15rem; color: #fff; margin-bottom: 12px; }
     ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
     nav a {

@@ -345,6 +345,18 @@ legend {
   background: var(--suelo-2);
 }
 
+.opcion__grosor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.fila__pedido {
+  color: var(--magenta-700);
+  font-weight: 700;
+}
+
 .fila__nombre {
   display: grid;
   gap: 2px;

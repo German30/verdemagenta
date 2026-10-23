@@ -5,16 +5,34 @@ import { Foto } from '../../componentes/foto';
 import { CatalogoService } from '../../servicios/catalogo';
 import { PedidoService } from '../../servicios/pedido';
 import { TIENDA } from '../../tienda.config';
-import { DatosCliente, enlaceWhatsApp, mensajePedido, PrecioPipe, vistaWhatsApp } from '../../util/formato';
+import {
+  DatosCliente,
+  enlaceWhatsApp,
+  ErroresCliente,
+  erroresCliente,
+  mensajePedido,
+  PrecioPipe,
+  vistaWhatsApp,
+} from '../../util/formato';
 
 const CLAVE_CLIENTE = 'verdemagenta.cliente';
+type Obligatorio = keyof ErroresCliente;
+const OBLIGATORIOS: Obligatorio[] = ['nombre', 'correo', 'entrega'];
+
+function hayGuardado(): boolean {
+  try {
+    return localStorage.getItem(CLAVE_CLIENTE) !== null;
+  } catch {
+    return false;
+  }
+}
 
 function leerCliente(): DatosCliente {
   try {
     const c = JSON.parse(localStorage.getItem(CLAVE_CLIENTE) ?? '{}');
-    return { nombre: c.nombre ?? '', entrega: c.entrega ?? '', notas: '' };
+    return { nombre: c.nombre ?? '', correo: c.correo ?? '', entrega: c.entrega ?? '', notas: '' };
   } catch {
-    return { nombre: '', entrega: '', notas: '' };
+    return { nombre: '', correo: '', entrega: '', notas: '' };
   }
 }
 
@@ -30,8 +48,15 @@ export class Pedido {
   protected readonly pedido = inject(PedidoService);
 
   protected readonly cliente = signal<DatosCliente>(leerCliente());
+  // Los datos personales solo se guardan en el navegador si el cliente lo pide (apagado por defecto)
+  protected readonly recordar = signal(hayGuardado());
   protected readonly enviado = signal(false);
   protected readonly sinNumero = !TIENDA.whatsapp;
+
+  // Los errores se muestran al salir del campo o al intentar enviar, no mientras se escribe por primera vez
+  private readonly tocados = signal<ReadonlySet<Obligatorio>>(new Set());
+  private readonly errores = computed(() => erroresCliente(this.cliente()));
+  protected readonly completo = computed(() => !Object.keys(this.errores()).length);
 
   protected readonly mensaje = computed(() => mensajePedido(this.pedido.lineas(), this.cliente()));
   protected readonly vista = computed(() => vistaWhatsApp(this.mensaje()));
@@ -39,9 +64,10 @@ export class Pedido {
 
   constructor() {
     effect(() => {
-      const { nombre, entrega } = this.cliente();
+      const { nombre, correo, entrega } = this.cliente();
       try {
-        localStorage.setItem(CLAVE_CLIENTE, JSON.stringify({ nombre, entrega }));
+        if (this.recordar()) localStorage.setItem(CLAVE_CLIENTE, JSON.stringify({ nombre, correo, entrega }));
+        else localStorage.removeItem(CLAVE_CLIENTE);
       } catch {
         // sin almacenamiento, no pasa nada
       }
@@ -51,6 +77,30 @@ export class Pedido {
   protected campo(clave: keyof DatosCliente, evento: Event): void {
     const valor = (evento.target as HTMLInputElement).value;
     this.cliente.update((c) => ({ ...c, [clave]: valor }));
+  }
+
+  protected alternarRecordar(evento: Event): void {
+    this.recordar.set((evento.target as HTMLInputElement).checked);
+  }
+
+  protected tocar(clave: Obligatorio): void {
+    this.tocados.update((t) => new Set(t).add(clave));
+  }
+
+  protected error(clave: Obligatorio): string | null {
+    return this.tocados().has(clave) ? (this.errores()[clave] ?? null) : null;
+  }
+
+  /** Sin los datos obligatorios no se abre WhatsApp: se muestran los errores y se va al primero. */
+  protected enviar(evento: Event): void {
+    if (!this.completo()) {
+      evento.preventDefault();
+      this.tocados.set(new Set(OBLIGATORIOS));
+      const primero = OBLIGATORIOS.find((c) => this.errores()[c]);
+      if (primero) document.getElementById(primero)?.focus();
+      return;
+    }
+    this.enviado.set(true);
   }
 
   protected grosor(id: string | null): string {

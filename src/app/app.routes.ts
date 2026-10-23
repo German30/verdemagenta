@@ -22,6 +22,11 @@ export const routes: Routes = [
     loadComponent: () => import('./paginas/pedido/pedido').then((m) => m.Pedido),
   },
   {
+    path: 'privacidad',
+    title: 'Aviso de privacidad · Verdemagenta',
+    loadComponent: () => import('./paginas/privacidad').then((m) => m.Privacidad),
+  },
+  {
     path: '**',
     title: 'Página no encontrada · Verdemagenta',
     loadComponent: () => import('./paginas/no-encontrada').then((m) => m.NoEncontrada),

@@ -1,6 +1,6 @@
 // Datos de contacto de la tienda. Todo lo que esté vacío no se muestra en el sitio.
 export const TIENDA = {
-  nombre: 'Verdemagenta',
+  nombre: 'Marisela Sosa',
   // PENDIENTE: número de WhatsApp en formato internacional sin signos, p. ej. 5215512345678.
   // Vacío = WhatsApp deja elegir el contacto al enviar.
   whatsapp: '528119779958',

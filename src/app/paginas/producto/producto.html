@@ -42,6 +42,14 @@
 
           <p class="precio cifra">{{ p.precio | precio }} <span>MXN</span></p>
 
+          @if (p.bajoPedido) {
+            <p class="nota-pedido">
+              <span class="bajo-pedido">Bajo pedido</span>
+              Lo pedimos para ti cuando confirmes tu pedido por WhatsApp
+              y ahí te decimos el tiempo de entrega.
+            </p>
+          }
+
           @if (p.descripcion) {
             <p class="descripcion">{{ p.descripcion }}</p>
           }
@@ -56,6 +64,9 @@
                       [attr.aria-current]="vp.id === p.id ? 'true' : null">
                       <span class="sello">{{ v.grosor.nombre }}</span>
                       <span class="cifra">{{ vp.precio | precio }}</span>
+                      @if (v.grosor.bajoPedido) {
+                        <span class="bajo-pedido">Bajo pedido</span>
+                      }
                     </a>
                   } @else {
                     <span class="variante agotada" [attr.aria-label]="v.grosor.nombre + ': no viene en este color'">

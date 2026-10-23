@@ -1,4 +1,4 @@
-<!-- Portada: abanico de muestras -->
+<!-- Portada: abanico de ganchos de crochet -->
 <section class="portada lienzo" aria-labelledby="titulo-portada">
   <div class="contenedor portada__rejilla">
     <div class="portada__texto">
@@ -19,22 +19,122 @@
     </div>
 
     <nav class="abanico" aria-label="Algunos colores del catálogo">
+      <!-- Luz y volumen compartidos por todos los ganchos; el color lo pone cada mango -->
+      <svg class="abanico__defs" width="0" height="0" aria-hidden="true">
+        <defs>
+          <linearGradient id="gancho-metal" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#6c7177" />
+            <stop offset="0.16" stop-color="#a9aeb3" />
+            <stop offset="0.32" stop-color="#f4f6f7" />
+            <stop offset="0.4" stop-color="#ffffff" />
+            <stop offset="0.5" stop-color="#d3d7da" />
+            <stop offset="0.74" stop-color="#9ba0a5" />
+            <stop offset="0.92" stop-color="#7a7f85" />
+            <stop offset="1" stop-color="#b4b8bc" />
+          </linearGradient>
+          <linearGradient id="gancho-garganta" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#3b3f43" />
+            <stop offset="1" stop-color="#8d9298" />
+          </linearGradient>
+          <!-- Silicona mate: luz suave desde la izquierda, sombra en el canto derecho -->
+          <linearGradient id="gancho-volumen" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#000" stop-opacity="0.22" />
+            <stop offset="0.08" stop-color="#fff" stop-opacity="0.06" />
+            <stop offset="0.24" stop-color="#fff" stop-opacity="0.26" />
+            <stop offset="0.36" stop-color="#fff" stop-opacity="0.1" />
+            <stop offset="0.6" stop-color="#fff" stop-opacity="0" />
+            <stop offset="0.82" stop-color="#000" stop-opacity="0.1" />
+            <stop offset="0.96" stop-color="#000" stop-opacity="0.3" />
+            <stop offset="1" stop-color="#000" stop-opacity="0.16" />
+          </linearGradient>
+          <linearGradient id="gancho-cuello" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#000" stop-opacity="0.28" />
+            <stop offset="0.35" stop-color="#000" stop-opacity="0" />
+            <stop offset="1" stop-color="#000" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="gancho-faceta" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#fff" stop-opacity="0.12" />
+            <stop offset="0.2" stop-color="#fff" stop-opacity="0.05" />
+            <stop offset="0.8" stop-color="#fff" stop-opacity="0.03" />
+            <stop offset="1" stop-color="#000" stop-opacity="0.07" />
+          </linearGradient>
+        </defs>
+      </svg>
       @if (abanico().length) {
         @for (c of abanico(); track c.producto.id; let i = $index) {
-          <a class="ficha" [routerLink]="['/producto', c.producto.id]" [style.--giro]="c.giro + 'deg'" [style.--i]="i">
-            <span class="ficha__pie">
-              <strong>{{ c.producto.titulo }}</strong>
-              <span class="cifra">{{ c.producto.precio | precio }}</span>
-            </span>
-            <span class="ficha__color" [style.background]="c.fondo"></span>
+          <a
+            class="gancho"
+            [routerLink]="['/producto', c.producto.id]"
+            [attr.aria-label]="c.producto.titulo + ', ' + (c.producto.precio | precio)"
+            [style.--giro]="c.giro + 'deg'"
+            [style.--i]="i"
+          >
+            <ng-container
+              *ngTemplateOutlet="
+                gancho;
+                context: {
+                  color: c.base,
+                  tinta: c.tinta,
+                  titulo: c.producto.titulo,
+                  precio: (c.producto.precio | precio),
+                  metal: c.metal,
+                }
+              "
+            />
           </a>
         }
       } @else {
         @for (g of abanicoVacio; track $index) {
-          <span class="ficha ficha--vacia" [style.--giro]="g + 'deg'" [style.--i]="$index"></span>
+          <span class="gancho gancho--vacio" [style.--giro]="g.giro + 'deg'" [style.--i]="$index">
+            <ng-container *ngTemplateOutlet="gancho; context: { color: '#e7eeea', metal: g.metal }" />
+          </span>
         }
       }
     </nav>
+
+    <!-- Un gancho de crochet ergonómico, dibujado a 50×560. `metal` engrosa o adelgaza la punta. -->
+    <ng-template #gancho let-color="color" let-tinta="tinta" let-titulo="titulo" let-precio="precio" let-metal="metal">
+      <svg class="gancho__dibujo" viewBox="0 0 50 560" aria-hidden="true">
+        <!-- Punta y vara de aluminio -->
+        <g [attr.transform]="metal">
+          <path
+            fill="url(#gancho-metal)"
+            d="M20 212V22C20 18 19 14 19 10C19 4 21.5.5 25 .5S31 3.5 31 7C31 9.5 29.5 11 27.5 11.2C26.2 11.3 25.4 12.2 25.4 13.4C25.4 15.4 27 17.4 30 19.6V212Z"
+          />
+          <path
+            fill="url(#gancho-garganta)"
+            d="M27.5 11.2C26.2 11.3 25.4 12.2 25.4 13.4C25.4 15.4 27 17.4 30 19.6V16.6C28.2 15.2 27.2 14.2 27.2 13.3C27.2 12.6 27.7 12 28.6 11.6Z"
+          />
+          <ellipse cx="22.6" cy="6" rx="1.2" ry="3.2" fill="#fff" opacity="0.8" />
+          <rect x="22.6" y="24" width="1.1" height="186" rx="0.55" fill="#fff" opacity="0.65" />
+        </g>
+        <!-- Mango de silicona -->
+        <path
+          [attr.fill]="color"
+          d="M21 200Q25 197 29 200C30 214 32 222 38 232C43 240 46 250 46 262V328C46 342 43.5 350 43.5 364C43.5 420 45 470 45 520C45 545 37 560 25 560C13 560 5 545 5 520C5 470 6.5 420 6.5 364C6.5 350 4 342 4 328V262C4 250 7 240 12 232C18 222 20 214 21 200Z"
+        />
+        <path
+          fill="url(#gancho-volumen)"
+          d="M21 200Q25 197 29 200C30 214 32 222 38 232C43 240 46 250 46 262V328C46 342 43.5 350 43.5 364C43.5 420 45 470 45 520C45 545 37 560 25 560C13 560 5 545 5 520C5 470 6.5 420 6.5 364C6.5 350 4 342 4 328V262C4 250 7 240 12 232C18 222 20 214 21 200Z"
+        />
+        <path fill="url(#gancho-cuello)" d="M21 200Q25 197 29 200C30 214 32 222 38 232C43 240 46 250 46 262H4C4 250 7 240 12 232C18 222 20 214 21 200Z" />
+        <!-- Descanso del pulgar: cara aplanada con biseles -->
+        <path
+          fill="url(#gancho-faceta)"
+          d="M9 256C12 248 38 248 41 256C43 270 43 318 41 330C39 342 11 342 9 330C7 318 7 270 9 256Z"
+        />
+        @if (titulo) {
+          <text class="gancho__rotulo" transform="translate(25 452) rotate(-90)" dominant-baseline="central" [attr.fill]="tinta">
+            {{ titulo }} <tspan class="gancho__precio" dx="4">{{ precio }}</tspan>
+          </text>
+          <g [attr.fill]="tinta" opacity="0.45">
+            <circle cx="20.5" cy="534" r="1.2" />
+            <circle cx="25" cy="534" r="1.2" />
+            <circle cx="29.5" cy="534" r="1.2" />
+          </g>
+        }
+      </svg>
+    </ng-template>
   </div>
 </section>
 
@@ -63,6 +163,9 @@
           <span class="grosor__tira" [style.background]="g.fondo" aria-hidden="true"></span>
           <span class="grosor__datos">
             <span class="sello">{{ g.nombre }}</span>
+            @if (g.bajoPedido) {
+              <span class="bajo-pedido">Bajo pedido</span>
+            }
             <span class="grosor__cuenta">{{ g.colores }} {{ g.colores === 1 ? 'color' : 'colores' }}</span>
             <span class="grosor__precio cifra">desde {{ g.desde | precio }}</span>
           </span>
@@ -105,7 +208,7 @@
             <ul class="lomos">
               @for (c of grupo.colores; track c.color; let i = $index) {
                 <li [style.--i]="i">
-                  <a class="lomo" routerLink="/tienda" [queryParams]="{ color: c.color }"
+                  <a class="lomo" [class.lomo--foto]="c.foto" routerLink="/tienda" [queryParams]="{ color: c.color }"
                     [style.background]="c.fondo" [style.color]="c.tinta">
                     <span class="lomo__nombre">{{ c.color }}</span>
                     <span class="lomo__frente">

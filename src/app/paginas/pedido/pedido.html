@@ -38,7 +38,7 @@
               <app-foto class="linea__rollo vt-foto" [producto]="l.producto" [style.view-transition-name]="'foto-' + l.producto.id" tamanos="72px" [sombra]="false" />
               <div class="linea__nombre">
                 <a class="rotulo" [routerLink]="['/producto', l.producto.id]">{{ l.producto.titulo }}</a>
-                <span><span class="sello">{{ grosor(l.producto.grosor) }}</span> <span class="cifra">{{ l.producto.precio | precio }} c/u</span></span>
+                <span><span class="sello">{{ grosor(l.producto.grosor) }}</span> <span class="cifra">{{ l.producto.precio | precio }} c/u</span>@if (l.producto.bajoPedido) { <span class="bajo-pedido">Bajo pedido</span> }</span>
               </div>
               <div class="paso" role="group" [attr.aria-label]="'Cantidad de ' + l.producto.titulo">
                 <button type="button" (click)="pedido.fijar(l.producto.id, l.cantidad - 1)"
@@ -67,13 +67,29 @@
       <aside class="envio" aria-labelledby="titulo-envio">
         <h2 id="titulo-envio" class="rotulo">Envíalo por WhatsApp</h2>
 
-        <div class="campo">
-          <label for="nombre">Tu nombre <span class="opcional">opcional</span></label>
-          <input id="nombre" autocomplete="name" [value]="cliente().nombre" (input)="campo('nombre', $event)" />
+        <p class="obligatorios">Los campos con <span aria-hidden="true">*</span> son obligatorios.</p>
+
+        <div class="campo" [class.con-error]="error('nombre')">
+          <label for="nombre">Tu nombre <span class="requerido" aria-hidden="true">*</span></label>
+          <input id="nombre" autocomplete="name" required [value]="cliente().nombre"
+            (input)="campo('nombre', $event)" (blur)="tocar('nombre')"
+            [attr.aria-invalid]="!!error('nombre')" [attr.aria-describedby]="error('nombre') ? 'nombre-error' : null" />
+          @if (error('nombre'); as e) { <p id="nombre-error" class="error">{{ e }}</p> }
         </div>
-        <div class="campo">
-          <label for="entrega">Ciudad o colonia de entrega <span class="opcional">opcional</span></label>
-          <input id="entrega" autocomplete="address-level2" [value]="cliente().entrega" (input)="campo('entrega', $event)" />
+        <div class="campo" [class.con-error]="error('correo')">
+          <label for="correo">Correo electrónico <span class="requerido" aria-hidden="true">*</span></label>
+          <input id="correo" type="email" inputmode="email" autocomplete="email" required [value]="cliente().correo"
+            (input)="campo('correo', $event)" (blur)="tocar('correo')"
+            [attr.aria-invalid]="!!error('correo')" [attr.aria-describedby]="error('correo') ? 'correo-error' : null" />
+          @if (error('correo'); as e) { <p id="correo-error" class="error">{{ e }}</p> }
+        </div>
+        <div class="campo" [class.con-error]="error('entrega')">
+          <label for="entrega">Dirección de entrega <span class="requerido" aria-hidden="true">*</span></label>
+          <textarea id="entrega" rows="2" autocomplete="street-address" required
+            placeholder="Calle y número, colonia, ciudad y código postal" [value]="cliente().entrega"
+            (input)="campo('entrega', $event)" (blur)="tocar('entrega')"
+            [attr.aria-invalid]="!!error('entrega')" [attr.aria-describedby]="error('entrega') ? 'entrega-error' : null"></textarea>
+          @if (error('entrega'); as e) { <p id="entrega-error" class="error">{{ e }}</p> }
         </div>
         <div class="campo">
           <label for="notas">Notas <span class="opcional">opcional</span></label>
@@ -81,15 +97,26 @@
             (input)="campo('notas', $event)"></textarea>
         </div>
 
+        <label class="recordar">
+          <input type="checkbox" [checked]="recordar()" (change)="alternarRecordar($event)" />
+          <span>Recordar mis datos en este dispositivo
+            <small>Se guardan solo en este navegador. Desmárcalo para borrarlos.</small></span>
+        </label>
+        <p class="privacidad">Usamos tus datos solo para preparar y entregar tu pedido. Lee el
+          <a routerLink="/privacidad">aviso de privacidad</a>.</p>
+
         <figure class="vista">
           <figcaption>Así llega tu mensaje</figcaption>
           <div class="vista__burbuja">{{ vista() }}</div>
         </figure>
 
-        <a class="boton boton--pedido boton--ancho enviar" [href]="enlace()" target="_blank" rel="noopener"
-          (click)="enviado.set(true)">
+        <a class="boton boton--whatsapp boton--ancho enviar" [href]="enlace()" target="_blank" rel="noopener"
+          (click)="enviar($event)">
           <app-icono nombre="whatsapp" /> Enviar pedido por WhatsApp
         </a>
+        @if (!completo()) {
+          <p class="falta">Completa tu nombre, correo y dirección para enviar el pedido.</p>
+        }
         @if (sinNumero) {
           <p class="aviso-dev">Falta configurar el número de la tienda en <code>tienda.config.ts</code>; por ahora WhatsApp te pedirá elegir el contacto.</p>
         }

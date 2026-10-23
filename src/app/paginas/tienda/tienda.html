@@ -35,7 +35,12 @@
         @for (g of catalogo.grosores(); track g.id) {
           <label class="opcion">
             <input type="radio" [name]="'grosor-' + s" [checked]="filtros.grosor === g.id" (change)="ir({ grosor: g.id })" />
-            <span class="sello">{{ g.nombre }}</span>
+            <span class="opcion__grosor">
+              <span class="sello">{{ g.nombre }}</span>
+              @if (g.bajoPedido) {
+                <span class="bajo-pedido">Bajo pedido</span>
+              }
+            </span>
             <span class="cuenta cifra">{{ conteoGrosor().get(g.id) ?? 0 }}</span>
           </label>
         }
@@ -181,7 +186,7 @@
                 <app-foto class="fila__rollo vt-foto" [producto]="p" [style.view-transition-name]="'foto-' + p.id" tamanos="64px" [sombra]="false" />
                 <div class="fila__nombre">
                   <a class="rotulo" [routerLink]="['/producto', p.id]">{{ p.titulo }}</a>
-                  <span>{{ p.linea ?? 'Accesorio' }}@if (p.acabado && p.acabado !== 'Liso') { · {{ p.acabado }} }</span>
+                  <span>{{ p.linea ?? 'Accesorio' }}@if (p.acabado && p.acabado !== 'Liso') { · {{ p.acabado }} }@if (p.bajoPedido) { · <strong class="fila__pedido">Bajo pedido</strong> }</span>
                 </div>
                 <span class="sello">{{ catalogo.grosor(p.grosor)?.nombre ?? 'Accesorio' }}</span>
                 <span class="fila__precio cifra">{{ p.precio | precio }}</span>

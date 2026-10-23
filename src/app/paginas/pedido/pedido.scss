@@ -154,6 +154,65 @@
   color: var(--tinta-3);
 }
 
+.obligatorios,
+.falta {
+  margin: 0;
+  color: var(--tinta-3);
+  font-size: 0.8125rem;
+}
+
+.requerido {
+  color: var(--magenta-600);
+}
+
+.error {
+  margin: 0;
+  color: #b3123c;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.con-error {
+  input,
+  textarea {
+    border-color: #b3123c;
+  }
+}
+
+.recordar {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
+    margin: 1px 0 0;
+    flex: none;
+    accent-color: var(--ciruela-700);
+  }
+
+  small {
+    display: block;
+    color: var(--tinta-3);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+}
+
+.privacidad {
+  color: var(--tinta-3);
+  font-size: 0.8125rem;
+
+  a {
+    color: var(--ciruela-700);
+    font-weight: 600;
+  }
+}
+
 .vista {
   margin: 4px 0 0;
   padding: 16px;

@@ -22,14 +22,14 @@ export const FAMILIAS = [
 export const ACABADOS = {
   liso: 'Liso',
   metalico: 'Metálico',
-  diamante: 'Metálico',
-  foil: 'Metálico',
+  diamante: 'Liso',
+  foil: 'Liso',
   neon: 'Neón',
   polipiel: 'Polipiel',
   latex: 'Polipiel',
   jaspe: 'Texturizado',
   acanalado: 'Texturizado',
-  craquelado: 'Texturizado',
+  craquelado: 'Metálico',
   mezclilla: 'Texturizado',
   flores: 'Estampado',
   animal: 'Estampado',
@@ -37,6 +37,13 @@ export const ACABADOS = {
   chispas: 'Estampado',
   bloques: 'Estampado',
   chevron: 'Estampado',
+};
+
+// Colores que se pintan con brillo pero la BD no describe como metálicos.
+export const ACABADO_POR_COLOR = {
+  'Bronce': 'Liso',
+  'Bronce Humo': 'Liso',
+  'Oro Vintage': 'Liso',
 };
 
 // [base, familia, patron, acentos?]

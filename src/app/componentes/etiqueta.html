@@ -15,6 +15,9 @@
     @if (acabadoVisible(); as a) {
       <span class="acabado">{{ a }}</span>
     }
+    @if (p.bajoPedido) {
+      <span class="bajo-pedido">Bajo pedido</span>
+    }
   </div>
   <p class="precio cifra">{{ p.precio | precio }}</p>
 </div>

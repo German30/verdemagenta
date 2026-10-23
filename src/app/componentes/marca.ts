@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-/** Logotipo: el sello de pinceladas (public/logo-*.webp, generado desde resources/Logo.jpg) y la palabra. */
+/**
+ * Logotipo: el sello de pinceladas (public/logo-*.webp, generado desde resources/Logo.jpg)
+ * y la firma. La firma usa la letra del logo (Ink Free, de Windows); donde no está
+ * instalada entra Kalam, la más parecida de Google Fonts.
+ */
 @Component({
   selector: 'app-marca',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -9,12 +13,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-variation-settings: 'wdth' 88;
-      font-weight: 850;
-      font-size: 1.35rem;
+      font-family: 'Ink Free', 'Kalam', cursive;
+      font-weight: 700;
+      font-size: 1.3rem;
       line-height: 1;
-      letter-spacing: -0.02em;
-      color: var(--marca-texto, var(--ciruela-800));
+      white-space: nowrap;
+      color: var(--marca-texto, #000);
     }
     img {
       width: var(--marca-sello, 44px);
@@ -22,9 +26,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       border-radius: 50%;
       background: #fff;
     }
-    b { font-weight: inherit; color: var(--marca-acento, var(--magenta-500)); }
   `,
-  template: `<img src="logo-96.webp" srcset="logo-96.webp 1x, logo-192.webp 2x" width="44" height="44" alt="" />
-    <span>verde<b>magenta</b></span>`,
+  template: `<img src="logo-96.webp" srcset="logo-96.webp 1x, logo-192.webp 2x" width="44" height="44" alt="Verde Magenta" />
+    <span>By Marisela Sosa</span>`,
 })
 export class Marca {}

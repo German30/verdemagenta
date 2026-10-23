@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Etiqueta } from '../../componentes/etiqueta';
 import { Icono } from '../../componentes/icono';
@@ -19,7 +20,7 @@ const REPRESENTANTES: Record<string, string[]> = {
 
 // Colores del abanico de portada, en orden.
 const ABANICO = [
-  'Rosa Barbie',
+  'Rosa Fucsia',
   'Coral',
   'Durazno',
   'Amarillo',
@@ -31,10 +32,23 @@ const ABANICO = [
   'Violeta',
 ];
 
+// Como en un estuche de ganchos: el primero es el más grueso y alto, el último el más fino.
+// Escala la punta de metal desde donde entra al mango (25, 212).
+function metalGancho(i: number, total: number): string {
+  const t = total > 1 ? i / (total - 1) : 0;
+  const ancho = 1.3 - 0.6 * t;
+  const alto = 1 - 0.2 * t;
+  return `translate(25 212) scale(${ancho.toFixed(3)} ${alto.toFixed(3)}) translate(-25 -212)`;
+}
+
+function giroAbanico(i: number, total: number): number {
+  return total > 1 ? -36 + (72 * i) / (total - 1) : 0;
+}
+
 @Component({
   selector: 'app-inicio',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, Etiqueta, Icono, PrecioPipe, Revelar],
+  imports: [NgTemplateOutlet, RouterLink, Etiqueta, Icono, PrecioPipe, Revelar],
   templateUrl: './inicio.html',
   styleUrl: './inicio.scss',
 })
@@ -51,15 +65,17 @@ export class Inicio {
   protected readonly abanico = computed(() => {
     const trapillos = this.catalogo.trapillos();
     const elegidos = ABANICO.map(
-      (c) => trapillos.find((p) => p.color === c && p.grosor === '3') ?? trapillos.find((p) => p.color === c),
+      (c) => trapillos.find((p) => p.color === c && p.grosor === '2-5') ?? trapillos.find((p) => p.color === c),
     ).filter((p): p is Producto => !!p);
     return elegidos.map((producto, i) => ({
       producto,
-      giro: elegidos.length > 1 ? -42 + (84 * i) / (elegidos.length - 1) : 0,
-      fondo: fondoMuestra(producto.muestra),
+      giro: giroAbanico(i, elegidos.length),
+      metal: metalGancho(i, elegidos.length),
+      base: producto.muestra.base,
+      tinta: tintaSobre(producto.muestra.base),
     }));
   });
-  protected readonly abanicoVacio = Array.from({ length: 10 }, (_, i) => -42 + (84 * i) / 9);
+  protected readonly abanicoVacio = Array.from({ length: 10 }, (_, i) => ({ giro: giroAbanico(i, 10), metal: metalGancho(i, 10) }));
 
   protected readonly grosores = computed(() =>
     this.catalogo.grosores().map((g) => {
@@ -71,7 +87,7 @@ export class Inicio {
         ...g,
         colores: productos.length,
         desde: productos.length ? Math.min(...productos.map((p) => p.precio)) : 0,
-        fondo: muestra ? fondoMuestra(muestra.muestra) : 'var(--menta-500)',
+        fondo: muestra ? (muestra.colorFoto ?? fondoMuestra(muestra.muestra)) : 'var(--menta-500)',
       };
     }),
   );
@@ -103,10 +119,16 @@ export class Inicio {
         .map((c) => {
           const variantes = trapillos.filter((p) => p.color === c.color);
           const grosores = this.catalogo.grosores().filter((g) => variantes.some((v) => v.grosor === g.id));
+          // Los lisos llevan el color real de su foto; los estampados conservan su dibujo
+          const real = c.muestra.patron === 'liso' ? c.colorFoto : null;
+          const color = real ?? fondoMuestra(c.muestra);
+          // El lomo es una franja de la foto de cualquier grosor de ese color, si hay una limpia
+          const lomo = variantes.find((v) => v.lomo)?.lomo ?? null;
           return {
             color: c.color!,
-            fondo: fondoMuestra(c.muestra),
-            tinta: tintaSobre(c.muestra.base),
+            foto: !!lomo,
+            fondo: lomo ? `url('${lomo}') center / cover, ${color}` : color,
+            tinta: tintaSobre(real ?? c.muestra.base),
             grosores: grosores.map((g) => g.nombre).join(' · '),
             desde: precio(Math.min(...variantes.map((v) => v.precio))),
           };
@@ -124,7 +146,7 @@ export class Inicio {
       { producto: tomar('Ivory', '3'), cantidad: 1 },
     ].filter((l): l is { producto: Producto; cantidad: number } => !!l.producto);
     return lineas.length
-      ? vistaWhatsApp(mensajePedido(lineas, { nombre: 'Ana', entrega: 'Guadalajara, Jal.', notas: '' }))
+      ? vistaWhatsApp(mensajePedido(lineas, { nombre: 'Ana', correo: '', entrega: 'Guadalajara, Jal.', notas: '' }))
       : '';
   });
 
