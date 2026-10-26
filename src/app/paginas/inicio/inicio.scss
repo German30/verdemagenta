@@ -270,106 +270,208 @@ h1 {
   border-block: 1px solid var(--linea);
 }
 
-.carta__familias {
-  display: grid;
-  gap: 26px;
+// Tablero de corcho: uno por familia, con marco de madera y una ficha clavada como título.
+// Cada color es una etiqueta de cartulina colgada de una tachuela con hilo de cáñamo,
+// con una muestra de trapillo tejido (la trenza teñida con el color real) y su nombre a mano.
+.carta__tableros {
+  columns: 2 460px;
+  column-gap: 40px;
 }
 
-.familia {
-  display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
-  align-items: start;
-  gap: 10px 24px;
-  padding-top: 18px;
-  border-top: 1px solid var(--linea-suave);
+.tablero {
+  position: relative;
+  // inline-block: en columnas el margen de arriba no se trunca
+  display: inline-block;
+  width: 100%;
+  break-inside: avoid;
+  margin: 0 0 40px;
+  padding: 18px 16px 22px;
+  border: 12px solid transparent;
+  border-radius: 6px;
+  background:
+    url('/texturas/corcho.webp') 0 0 / 160px auto padding-box,
+    url('/texturas/madera.webp') 0 0 / 220px auto border-box;
+  box-shadow:
+    inset 0 3px 10px rgb(40 20 5 / 0.45),
+    inset 0 0 0 1px rgb(40 20 5 / 0.3),
+    0 18px 30px -16px rgb(40 30 20 / 0.55);
 }
 
-.familia__nombre {
-  font-size: 1rem;
+// Ficha de cartulina rayada clavada con una tachuela
+.tablero__ficha {
+  --tachuela: #e0217c;
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 22px 4px;
+  padding: 14px 16px 6px;
+  background:
+    linear-gradient(rgb(225 80 110 / 0.55) 0 0) 0 11px / 100% 1.5px no-repeat,
+    #fffdf6;
+  color: var(--magenta-700);
+  font-family: 'Kalam', cursive;
   font-weight: 700;
-  line-height: 1.3;
-  color: var(--ciruela-800);
+  font-size: 1.25rem;
+  line-height: 1.25;
+  box-shadow: 1px 3px 5px rgb(30 15 5 / 0.35);
+  rotate: -2deg;
 
-  span {
-    margin-left: 4px;
+  &::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    translate: -50% 0;
+  }
+
+  small {
+    font-family: var(--fuente);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--tinta-3);
-    font-weight: 600;
   }
 }
 
-.lomos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+.tablero:nth-child(even) .tablero__ficha {
+  --tachuela: #19a87d;
+  rotate: 1.5deg;
+}
+
+// La cabeza de plástico de la tachuela, con brillo y sombra sobre el corcho
+.tablero__ficha::before,
+.colgantes li::before {
+  width: 13px;
+  height: 13px;
+  z-index: 3;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.85) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 50% 60%, transparent 40%, rgb(0 0 0 / 0.28)),
+    var(--tachuela);
+  box-shadow: 2px 3px 2px -1px rgb(30 15 5 / 0.5);
+}
+
+.colgantes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 6px 10px;
   margin: 0;
   padding: 0;
   list-style: none;
 
   li {
+    --tachuela: #e0217c;
+    --giro: -3deg;
     position: relative;
+    padding-top: 12px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      translate: -50% 0;
+    }
+
+    &:nth-child(4n + 2) {
+      --tachuela: #19a87d;
+      --giro: 2.5deg;
+    }
+    &:nth-child(4n + 3) {
+      --tachuela: #f2b705;
+      --giro: -1.5deg;
+    }
+    &:nth-child(4n) {
+      --tachuela: #1f8fd6;
+      --giro: 4deg;
+    }
   }
 }
 
-.lomo {
+.colgante {
   position: relative;
-  display: flex;
-  justify-content: center;
-  width: 34px;
-  height: 136px;
-  border-radius: 2px;
+  display: block;
+  color: #3a2a20;
   text-decoration: none;
-  box-shadow:
-    inset 3px 0 4px -2px rgb(0 0 0 / 0.3),
-    inset -3px 0 4px -2px rgb(0 0 0 / 0.3);
-  transition: transform 0.35s var(--salida);
-  isolation: isolate;
 
-  // Tela de punto del trapillo (foto en gris neutro) teñida por el color del lomo,
-  // detrás del nombre. A 126 px la unión en espejo de la textura cae al pie del lomo.
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+}
+
+// La etiqueta: cartulina con las esquinas de arriba cortadas y el ojillo reforzado.
+// Cuelga de la tachuela, así que gira desde ahí.
+.colgante__pieza {
+  --carton: #fbf5e6;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  margin-top: 8px;
+  padding: 22px 7px 7px;
+  background:
+    radial-gradient(circle at 50% 10px, #6b4a2c 0 2.5px, #e9dcbf 3px 5.5px, transparent 6px),
+    linear-gradient(135deg, transparent 10px, var(--carton) 10.5px) left top / 51% 28px no-repeat,
+    linear-gradient(225deg, transparent 10px, var(--carton) 10.5px) right top / 51% 28px no-repeat,
+    linear-gradient(var(--carton) 0 0) bottom / 100% calc(100% - 28px) no-repeat;
+  filter: drop-shadow(1px 3px 2px rgb(30 15 5 / 0.4));
+  rotate: var(--giro);
+  transform-origin: 50% -14px;
+
+  // Hilo de cáñamo de la tachuela al ojillo
   &::before {
     content: '';
     position: absolute;
+    top: -14px;
+    left: 50%;
+    width: 2px;
+    height: 24px;
+    translate: -50% 0;
+    background: repeating-linear-gradient(#cdb486 0 2px, #a88a5a 2px 3px);
+    border-radius: 1px;
+  }
+}
+
+// Muestra de trapillo tejido: la trenza da la forma (máscara) y el volumen (overlay)
+.colgante__muestra {
+  --trenza: url('/texturas/trenza-h.webp') left center / auto 100% repeat-x;
+  position: relative;
+  width: 100%;
+  height: 34px;
+  -webkit-mask: var(--trenza);
+  mask: var(--trenza);
+
+  &::after {
+    content: '';
+    position: absolute;
     inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    background: url('/texturas/punto.webp') 0 0 / 126px auto;
+    background: var(--trenza);
     mix-blend-mode: overlay;
-    pointer-events: none;
   }
 }
 
-// Con franja de su foto el lomo ya es tela real: sin textura añadida, y el nombre
-// lleva una sombra suave para leerse sobre las vueltas del rollo
-.lomo--foto {
-  &::before {
-    content: none;
-  }
-
-  .lomo__nombre {
-    text-shadow: 0 0 6px rgb(0 0 0 / 0.25);
-  }
-}
-
-.lomo__nombre {
-  max-height: 100%;
-  padding-block: 10px;
+.colgante__nombre {
+  display: -webkit-box;
+  min-height: 2.1em;
+  margin-top: 6px;
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1.05;
+  text-align: center;
   overflow: hidden;
-  writing-mode: vertical-rl;
-  rotate: 180deg;
-  font-variation-settings: 'wdth' 62;
-  font-weight: 800;
-  font-size: 0.78rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
-// La ficha que sale al frente cuando el lomo se jala
-.lomo__frente {
+// La ficha sale arriba de la etiqueta
+.colgante__ficha {
   position: absolute;
   left: 50%;
-  bottom: calc(100% + 8px);
+  top: 0;
   z-index: 5;
   display: grid;
   gap: 2px;
@@ -382,7 +484,7 @@ h1 {
   font-size: 0.8125rem;
   line-height: 1.35;
   box-shadow: var(--sombra-panel);
-  translate: -50% 6px;
+  translate: -50% calc(-100% + 6px);
   opacity: 0;
   pointer-events: none;
   transition:
@@ -397,14 +499,33 @@ h1 {
   }
 }
 
-.lomo:hover,
-.lomo:focus-visible {
-  transform: translateY(-8px);
+.colgantes li:has(.colgante:hover),
+.colgantes li:has(.colgante:focus-visible) {
   z-index: 4;
+}
 
-  .lomo__frente {
+// Al tocarla, la etiqueta se columpia en su tachuela
+@keyframes vaiven {
+  25% {
+    transform: rotate(9deg);
+  }
+  50% {
+    transform: rotate(-6deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+.colgante:hover,
+.colgante:focus-visible {
+  .colgante__pieza {
+    animation: vaiven 0.9s var(--salida);
+  }
+
+  .colgante__ficha {
     opacity: 1;
-    translate: -50% 0;
+    translate: -50% calc(-100% - 4px);
   }
 }
 
@@ -524,13 +645,14 @@ h1 {
     grid-template-columns: 1fr;
   }
 
-  .familia {
-    grid-template-columns: 1fr;
+  .tablero {
+    padding: 14px 10px 18px;
+    border-width: 10px;
   }
 
-  .lomo {
-    width: 30px;
-    height: 112px;
+  .colgantes {
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 4px 8px;
   }
 
   // En móvil la escala se lee mejor en horizontal
@@ -587,16 +709,15 @@ h1 {
   scale: 1 1;
 }
 
-// Los lomos de cada familia entran a su repisa en cascada
-.familia.por-revelar .lomo {
+// Las etiquetas de cada tablero se van colgando una tras otra
+.tablero.por-revelar li {
   opacity: 0;
-  translate: 0 18px;
+  translate: 0 -10px;
 }
-.familia .lomo {
+.tablero li {
   transition:
-    opacity 0.4s var(--salida) calc(min(var(--i, 0), 16) * 22ms),
-    translate 0.5s var(--salida) calc(min(var(--i, 0), 16) * 22ms),
-    transform 0.35s var(--salida);
+    opacity 0.35s var(--salida) calc(min(var(--i, 0), 16) * 35ms),
+    translate 0.5s var(--salida) calc(min(var(--i, 0), 16) * 35ms);
 }
 
 // El mensaje de ejemplo se escribe renglón por renglón

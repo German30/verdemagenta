@@ -24,7 +24,7 @@ function lineaDe(nombre) {
 }
 
 /** Convierte una fila de `producto` en el modelo que consume el sitio. */
-export function aProducto(fila, { fotos = new Set(), colores = {}, lomos = new Set() } = {}) {
+export function aProducto(fila, { fotos = new Set(), colores = {}, lomos = new Set(), rollos = new Set() } = {}) {
   const categoria = (fila.categoria ?? '').trim().toUpperCase();
   const grosor = POR_CATEGORIA.get(categoria) ?? null;
   const color = grosor ? colorDe(fila.producto) : null;
@@ -52,5 +52,7 @@ export function aProducto(fila, { fotos = new Set(), colores = {}, lomos = new S
     colorFoto: colores[fila.id] ?? null,
     // Franja de la foto con solo trapillo, para el lomo de la carta
     lomo: lomos.has(fila.id) ? `/fotos/${fila.id}-lomo.webp` : null,
+    // El rollo de la foto recortado en círculo, para el estante de la carta
+    rollo: rollos.has(fila.id) ? `/fotos/${fila.id}-rollo.webp` : null,
   };
 }

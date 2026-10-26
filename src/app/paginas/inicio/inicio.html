@@ -197,21 +197,26 @@
   <div class="contenedor">
     <div class="encabezado encabezado--fila">
       <h2 id="titulo-carta" class="rotulo">La carta completa</h2>
-      <p>{{ totalColores() }} colores. Pasa por un lomo para ver en qué grosores viene; tócalo para ver los rollos.</p>
+      <p>{{ totalColores() }} colores. Pasa por una etiqueta para ver en qué grosores viene; tócala para ver los rollos en la tienda.</p>
     </div>
 
-    <div class="carta__familias">
+    <div class="carta__tableros">
       @for (grupo of carta(); track grupo.familia.id) {
         @if (grupo.colores.length) {
-          <div class="familia" appRevelar="0.3">
-            <h3 class="familia__nombre">{{ grupo.familia.nombre }} <span class="cifra">{{ grupo.colores.length }}</span></h3>
-            <ul class="lomos">
+          <div class="tablero" appRevelar="0.2">
+            <h3 class="tablero__ficha">
+              {{ grupo.familia.nombre }}
+              <small><span class="cifra">{{ grupo.colores.length }}</span> {{ grupo.colores.length === 1 ? 'color' : 'colores' }}</small>
+            </h3>
+            <ul class="colgantes">
               @for (c of grupo.colores; track c.color; let i = $index) {
                 <li [style.--i]="i">
-                  <a class="lomo" [class.lomo--foto]="c.foto" routerLink="/tienda" [queryParams]="{ color: c.color }"
-                    [style.background]="c.fondo" [style.color]="c.tinta">
-                    <span class="lomo__nombre">{{ c.color }}</span>
-                    <span class="lomo__frente">
+                  <a class="colgante" routerLink="/tienda" [queryParams]="{ color: c.color }">
+                    <span class="colgante__pieza">
+                      <span class="colgante__muestra" [style.background]="c.fondo" aria-hidden="true"></span>
+                      <span class="colgante__nombre">{{ c.color }}</span>
+                    </span>
+                    <span class="colgante__ficha">
                       <strong>{{ c.color }}</strong>
                       <span>{{ c.grosores }}</span>
                       <span class="cifra">desde {{ c.desde }}</span>

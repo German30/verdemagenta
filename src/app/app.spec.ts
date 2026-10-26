@@ -43,6 +43,7 @@ describe('mensajePedido', () => {
     foto: null,
     colorFoto: null,
     lomo: null,
+    rollo: null,
   };
 
   it('lista cantidades, subtotales y total', () => {

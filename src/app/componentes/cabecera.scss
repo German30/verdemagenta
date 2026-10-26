@@ -44,8 +44,9 @@
     transition: background-color 0.15s, color 0.15s;
 
     &:hover {
-      background: var(--menta-100);
-      color: var(--ciruela-800);
+      // Café del corcho de la carta, con la tinta de sus etiquetas
+      background: #f6f0e6;
+      color: #3a2a20;
     }
 
     &.activo {

@@ -108,7 +108,7 @@ export class Inicio {
     return lista.slice(0, 10);
   });
 
-  /** Carta completa agrupada por familia; cada lomo resume en qué grosores existe. */
+  /** Carta completa: un tablero de corcho por familia; cada etiqueta colgada resume en qué grosores existe. */
   protected readonly carta = computed(() => {
     const trapillos = this.catalogo.trapillos();
     return this.catalogo.familias().map((f) => ({
@@ -122,13 +122,9 @@ export class Inicio {
           // Los lisos llevan el color real de su foto; los estampados conservan su dibujo
           const real = c.muestra.patron === 'liso' ? c.colorFoto : null;
           const color = real ?? fondoMuestra(c.muestra);
-          // El lomo es una franja de la foto de cualquier grosor de ese color, si hay una limpia
-          const lomo = variantes.find((v) => v.lomo)?.lomo ?? null;
           return {
             color: c.color!,
-            foto: !!lomo,
-            fondo: lomo ? `url('${lomo}') center / cover, ${color}` : color,
-            tinta: tintaSobre(real ?? c.muestra.base),
+            fondo: color,
             grosores: grosores.map((g) => g.nombre).join(' · '),
             desde: precio(Math.min(...variantes.map((v) => v.precio))),
           };

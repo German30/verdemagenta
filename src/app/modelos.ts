@@ -45,6 +45,8 @@ export interface Producto {
   colorFoto: string | null;
   /** Franja de la foto con solo trapillo para el lomo de la carta; null si no hay una limpia. */
   lomo: string | null;
+  /** Rollo de la foto recortado en círculo para el estante de la carta; null si no hay uno limpio. */
+  rollo: string | null;
 }
 
 export interface Grosor {

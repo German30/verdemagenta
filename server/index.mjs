@@ -40,7 +40,8 @@ let cache = { cuando: 0, productos: null };
 const raiz = path.dirname(fileURLToPath(import.meta.url));
 
 // Datos sacados de las fotos: fotos.json (ids con foto, `npm run fotos`), colores.json y
-// lomos.json (color real y recorte para la carta, `npm run colores-fotos`)
+// lomos.json (color real y recorte para la carta, `npm run colores-fotos`), rollos.json
+// (rollo recortado para el estante, `npm run rollos-fotos`)
 function deFotos(archivo, vacio) {
   try {
     return JSON.parse(readFileSync(path.resolve(raiz, '../public/fotos', archivo), 'utf8'));
@@ -68,6 +69,7 @@ async function leerProductos() {
     fotos: new Set(deFotos('fotos.json', [])),
     colores: deFotos('colores.json', {}),
     lomos: new Set(deFotos('lomos.json', [])),
+    rollos: new Set(deFotos('rollos.json', [])),
   };
   cache = { cuando: Date.now(), productos: filas.map((f) => aProducto(f, analisis)) };
   return cache.productos;
