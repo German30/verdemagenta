@@ -1,12 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Catalogo, Familia, Grosor, Producto } from '../modelos';
+import { ApiCifrada } from './api-cifrada';
 
 type Estado = 'cargando' | 'listo' | 'error';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogoService {
-  private readonly http = inject(HttpClient);
+  private readonly api = inject(ApiCifrada);
   private readonly datos = signal<Catalogo | null>(null);
 
   readonly estado = signal<Estado>('cargando');
@@ -34,13 +34,13 @@ export class CatalogoService {
 
   cargar(): void {
     this.estado.set('cargando');
-    this.http.get<Catalogo>('/api/catalogo').subscribe({
-      next: (c) => {
+    this.api.consultar<Catalogo>({ ruta: 'catalogo' }).then(
+      (c) => {
         this.datos.set(c);
         this.estado.set('listo');
       },
-      error: () => this.estado.set('error'),
-    });
+      () => this.estado.set('error'),
+    );
   }
 
   grosor(id: string | null): Grosor | undefined {

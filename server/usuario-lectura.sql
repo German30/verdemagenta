@@ -5,6 +5,8 @@
 CREATE USER IF NOT EXISTS 'vm_lectura'@'localhost' IDENTIFIED BY 'CAMBIA_ESTA_CONTRASENA';
 ALTER USER 'vm_lectura'@'localhost' IDENTIFIED BY 'CAMBIA_ESTA_CONTRASENA';
 GRANT SELECT ON inventario_vm.producto TO 'vm_lectura'@'localhost';
+-- MySQL rechaza cualquier conexión de este usuario que no vaya cifrada con TLS
+ALTER USER 'vm_lectura'@'localhost' REQUIRE SSL;
 FLUSH PRIVILEGES;
 
 -- Comprobar: SHOW GRANTS FOR 'vm_lectura'@'localhost';

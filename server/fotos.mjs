@@ -4,11 +4,11 @@
 // más public/fotos/fotos.json con los ids que tienen foto.
 //
 //   npm run fotos
-import mysql from 'mysql2/promise';
 import sharp from 'sharp';
 import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { crearPool } from './bd.mjs';
 
 const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const origen = path.resolve(raiz, process.env.FOTOS_ORIGEN ?? 'src/app/resources');
@@ -26,14 +26,7 @@ const clave = (s) =>
     .trim()
     .toLowerCase();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST ?? 'localhost',
-  port: Number(process.env.DB_PORT ?? 3306),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD ?? '',
-  database: process.env.DB_NAME ?? 'inventario_vm',
-  charset: 'utf8mb4',
-});
+const pool = crearPool();
 
 const [productos] = await pool.query('SELECT id, producto FROM producto');
 await pool.end();
