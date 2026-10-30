@@ -70,7 +70,6 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
   styles: `
     :host {
       display: block;
-      margin-top: clamp(64px, 10vw, 120px);
       padding-top: clamp(40px, 6vw, 72px);
       background-color: var(--ciruela-900);
     }
