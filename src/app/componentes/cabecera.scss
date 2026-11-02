@@ -59,13 +59,144 @@
   }
 }
 
+.abrir-buscador {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--ciruela-800);
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: #f6f0e6;
+  }
+}
+
+// Buscador a pantalla completa
+.buscador {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(255 255 255 / 0.96);
+  color: var(--tinta);
+
+  &::backdrop {
+    background: rgb(40 20 40 / 0.25);
+    backdrop-filter: blur(6px);
+  }
+
+  &[open] {
+    animation: aparece 0.28s var(--salida);
+  }
+}
+
+@keyframes aparece {
+  from {
+    opacity: 0;
+    translate: 0 -12px;
+  }
+}
+
+.buscador__caja {
+  position: relative;
+  display: grid;
+  align-content: start;
+  min-height: 100%;
+  padding-top: clamp(96px, 22vh, 220px);
+  // Los clics fuera de la caja llegan al dialog y lo cierran
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.buscador__cerrar {
+  position: absolute;
+  top: 16px;
+  right: var(--gutter);
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid var(--linea);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ciruela-800);
+
+  &:hover {
+    background: #f6f0e6;
+  }
+}
+
+.buscador__form {
+  gap: 14px;
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.campo .buscador__titulo {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  color: var(--ciruela-800);
+}
+
+.buscador__fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+
+  input {
+    min-height: 58px;
+    font-size: 1.15rem;
+    background: #fff;
+  }
+
+  .boton {
+    min-height: 58px;
+    padding-inline: 1.6em;
+  }
+}
+
+.buscar {
+  position: relative;
+
+  app-icono {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--tinta-3);
+    pointer-events: none;
+  }
+
+  input {
+    padding-left: 48px;
+  }
+}
+
+@media (max-width: 479px) {
+  .buscador__fila {
+    grid-template-columns: 1fr;
+  }
+}
+
 .boton-pedido {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 44px;
   padding: 6px 14px 6px 12px;
-  margin-left: auto;
   border-radius: var(--radio);
   background: var(--ciruela-700);
   color: #fff;
@@ -155,9 +286,6 @@
   }
   .menu {
     display: grid;
-  }
-  .boton-pedido {
-    margin-left: auto;
   }
 }
 

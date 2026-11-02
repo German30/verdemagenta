@@ -57,6 +57,11 @@ html {
   -webkit-text-size-adjust: 100%;
   scroll-padding-top: calc(var(--cabecera) + 16px);
   scrollbar-color: var(--ciruela-300) var(--suelo-2);
+
+  // Con el buscador abierto la página de atrás no se desplaza
+  &:has(dialog[open]) {
+    overflow: hidden;
+  }
 }
 
 body {

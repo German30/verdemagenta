@@ -18,6 +18,11 @@
     </ul>
   </nav>
 
+  <button type="button" class="abrir-buscador" aria-haspopup="dialog" (click)="abrirBuscador()">
+    <app-icono nombre="buscar" />
+    <span class="solo-lectores">Buscar productos</span>
+  </button>
+
   <a class="boton-pedido" routerLink="/pedido" routerLinkActive="activo" ariaCurrentWhenActive="page">
     @for (n of [pedido.piezas()]; track n) {
       <app-icono nombre="pedido" animate.enter="salta" />
@@ -55,3 +60,26 @@
   </ul>
 </nav>
 }
+
+<!-- Buscador a pantalla completa: al buscar lleva a la tienda con los resultados -->
+<dialog #buscador class="buscador" aria-labelledby="titulo-buscador" (click)="cerrarAlTocarFuera($event)">
+  <div class="buscador__caja contenedor">
+    <button type="button" class="buscador__cerrar" (click)="buscador.close()">
+      <app-icono nombre="cerrar" />
+      <span class="solo-lectores">Cerrar buscador</span>
+    </button>
+
+    <form class="campo buscador__form" role="search" (submit)="$event.preventDefault(); buscar(q.value)">
+      <label id="titulo-buscador" for="buscar-cabecera" class="rotulo buscador__titulo">¿Qué color buscas?</label>
+      <div class="buscador__fila">
+        <div class="buscar">
+          <app-icono nombre="buscar" />
+          <input #q id="buscar-cabecera" type="search" placeholder="Color o producto" [value]="busqueda()"
+            autocomplete="off" />
+        </div>
+        <button type="submit" class="boton boton--pedido">Buscar</button>
+      </div>
+      <p class="campo__ayuda">Por ejemplo: magenta, menta, metálico, polipiel.</p>
+    </form>
+  </div>
+</dialog>

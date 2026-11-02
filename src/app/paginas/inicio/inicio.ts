@@ -33,12 +33,10 @@ const ABANICO = [
 ];
 
 // Como en un estuche de ganchos: el primero es el más grueso y alto, el último el más fino.
-// Escala la punta de metal desde donde entra al mango (25, 212).
-function metalGancho(i: number, total: number): string {
+// Escala de la punta de metal, desde donde entra al mango.
+function metalGancho(i: number, total: number): { x: number; y: number } {
   const t = total > 1 ? i / (total - 1) : 0;
-  const ancho = 1.3 - 0.6 * t;
-  const alto = 1 - 0.2 * t;
-  return `translate(25 212) scale(${ancho.toFixed(3)} ${alto.toFixed(3)}) translate(-25 -212)`;
+  return { x: +(1.1 - 0.45 * t).toFixed(3), y: +(1 - 0.15 * t).toFixed(3) };
 }
 
 function giroAbanico(i: number, total: number): number {

@@ -115,21 +115,44 @@
       </article>
 
       @if (vecinos().length > 1) {
-        <section class="contenedor muestrario" aria-labelledby="titulo-vecinos">
-          <h2 id="titulo-vecinos" class="rotulo">
-            @if (grosor(); as g) { Otros colores en {{ g.nombre }} }
-          </h2>
-          <ul class="lomos" tabindex="0" aria-label="Colores">
-            @for (v of vecinos(); track v.producto.id) {
-              <li>
-                <a class="lomo" [routerLink]="['/producto', v.producto.id]" [class.actual]="v.producto.id === p.id"
-                  [attr.aria-current]="v.producto.id === p.id ? 'page' : null"
-                  [style.background]="v.fondo" [style.color]="v.tinta" [attr.title]="v.producto.titulo">
-                  <span>{{ v.producto.titulo }}</span>
-                </a>
-              </li>
-            }
-          </ul>
+        <section class="muestrario" aria-labelledby="titulo-vecinos">
+          <div class="contenedor">
+            <div class="encabezado">
+              <h2 id="titulo-vecinos" class="rotulo">
+                @if (grosor(); as g) { Otros colores en {{ g.nombre }} } @else { Otros accesorios }
+              </h2>
+              <p>Pasa por una etiqueta para ver su precio; tócala para abrir ese color.</p>
+            </div>
+
+            <div class="tableros">
+              @for (grupo of tableros(); track grupo.id) {
+                <div class="tablero" appRevelar="0.2">
+                  <h3 class="tablero__ficha">
+                    {{ grupo.nombre }}
+                    <small><span class="cifra">{{ grupo.colores.length }}</span> {{ grosor() ? (grupo.colores.length === 1 ? 'color' : 'colores') : (grupo.colores.length === 1 ? 'pieza' : 'piezas') }}</small>
+                  </h3>
+                  <ul class="colgantes">
+                    @for (v of grupo.colores; track v.producto.id; let i = $index) {
+                      <li [style.--i]="i">
+                        <a class="colgante" [routerLink]="['/producto', v.producto.id]" [class.actual]="v.producto.id === p.id"
+                          [attr.aria-current]="v.producto.id === p.id ? 'page' : null">
+                          <span class="colgante__pieza">
+                            <span class="colgante__muestra" [style.background]="v.fondo" aria-hidden="true"></span>
+                            <span class="colgante__nombre">{{ v.nombre }}</span>
+                          </span>
+                          <span class="colgante__ficha">
+                            <strong>{{ v.producto.titulo }}</strong>
+                            @if (v.producto.id === p.id) { <span>Estás viendo este</span> }
+                            <span class="cifra">{{ v.producto.precio | precio }}</span>
+                          </span>
+                        </a>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </div>
         </section>
       }
     } @else {

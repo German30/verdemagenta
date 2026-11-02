@@ -1,3 +1,5 @@
+@use '../../../estilos/tablero';
+
 .franja {
   padding-block: 16px 120px;
 }
@@ -257,64 +259,42 @@
   }
 }
 
-// Muestrario de lomos
+// Otros colores: el mismo tablero de corcho de la carta de inicio
 .muestrario {
   margin-top: clamp(56px, 8vw, 96px);
+  padding-block: clamp(56px, 8vw, 104px);
+  background: var(--carton);
+  border-block: 1px solid var(--linea);
+}
+
+// Un tablero por familia, en dos columnas como la carta
+.tableros {
+  columns: 2 460px;
+  column-gap: 40px;
+  margin-bottom: -40px;
+}
+
+.encabezado {
+  display: grid;
+  gap: 12px;
+  max-width: 62ch;
+  margin-bottom: clamp(28px, 4vw, 44px);
 
   h2 {
-    margin-bottom: 20px;
-    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
     color: var(--ciruela-800);
   }
+
+  p {
+    color: var(--tinta-2);
+    font-size: 1.05rem;
+  }
 }
 
-.lomos {
-  display: flex;
-  gap: 4px;
-  margin: 0;
-  padding: 12px 0 16px;
-  overflow-x: auto;
-  list-style: none;
-  scrollbar-width: thin;
-}
-
-.lomo {
-  display: flex;
-  justify-content: center;
-  width: 34px;
-  height: 140px;
-  border-radius: 2px;
-  text-decoration: none;
-  box-shadow:
-    inset 3px 0 4px -2px rgb(0 0 0 / 0.3),
-    inset -3px 0 4px -2px rgb(0 0 0 / 0.3);
-  transition: transform 0.3s var(--salida);
-
-  span {
-    max-height: 100%;
-    padding-block: 10px;
-    overflow: hidden;
-    writing-mode: vertical-rl;
-    rotate: 180deg;
-    font-variation-settings: 'wdth' 62;
-    font-weight: 800;
-    font-size: 0.78rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  &:hover,
-  &:focus-visible {
-    transform: translateY(-8px);
-  }
-
-  &.actual {
-    transform: translateY(-8px);
-    outline: 2.5px solid var(--magenta-500);
-    outline-offset: 2px;
-  }
+// La etiqueta del producto que se está viendo, en cartulina rosa
+.colgante.actual .colgante__pieza {
+  --carton: var(--magenta-100);
+  color: var(--magenta-700);
 }
 
 @media (max-width: 859px) {

@@ -15,13 +15,14 @@ import { Icono } from '../../componentes/icono';
 import { Foto } from '../../componentes/foto';
 import { CatalogoService } from '../../servicios/catalogo';
 import { PedidoService } from '../../servicios/pedido';
-import { fondoMuestra, tintaSobre } from '../../util/color';
+import { fondoMuestra } from '../../util/color';
 import { enlaceWhatsApp, mensajeConsulta, PrecioPipe } from '../../util/formato';
+import { Revelar } from '../../util/revelar';
 
 @Component({
   selector: 'app-producto',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, Foto, Icono, PrecioPipe],
+  imports: [RouterLink, Foto, Icono, PrecioPipe, Revelar],
   templateUrl: './producto.html',
   styleUrl: './producto.scss',
 })
@@ -54,13 +55,30 @@ export class ProductoPagina {
   });
 
 
+  /** Los demás colores del mismo grosor, colgados en un tablero por familia como en la carta de inicio. */
   protected readonly vecinos = computed(() => {
     const p = this.producto();
     if (!p) return [];
     return this.catalogo
       .productos()
       .filter((x) => (p.tipo === 'accesorio' ? x.tipo === 'accesorio' : x.grosor === p.grosor))
-      .map((x) => ({ producto: x, fondo: fondoMuestra(x.muestra), tinta: tintaSobre(x.muestra.base) }));
+      .map((x) => ({
+        producto: x,
+        nombre: x.color ?? x.titulo,
+        // Los lisos llevan el color real de su foto; los estampados conservan su dibujo
+        fondo: (x.muestra.patron === 'liso' ? x.colorFoto : null) ?? fondoMuestra(x.muestra),
+      }));
+  });
+
+  protected readonly tableros = computed(() => {
+    const vecinos = this.vecinos();
+    const grupos = this.catalogo
+      .familias()
+      .map((f) => ({ id: f.id, nombre: f.nombre, colores: vecinos.filter((v) => v.producto.familia === f.id) }));
+    // Lo que no tiene familia (accesorios) va en su propio tablero al final
+    const sueltos = vecinos.filter((v) => !grupos.some((g) => g.id === v.producto.familia));
+    if (sueltos.length) grupos.push({ id: 'otros', nombre: this.grosor() ? 'Otros' : 'Accesorios', colores: sueltos });
+    return grupos.filter((g) => g.colores.length);
   });
 
   protected readonly consulta = computed(() => {
