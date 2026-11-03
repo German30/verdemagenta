@@ -112,6 +112,63 @@
   }
 }
 
+.antes {
+  margin-right: 6px;
+  color: var(--tinta-3);
+  font-weight: 500;
+}
+
+// Mayoreo: subtotal y descuento sobre el total
+.desglose {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-top: 16px;
+
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  dt {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--tinta-2);
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 700;
+  }
+}
+
+.desglose__ahorro dd {
+  color: var(--magenta-700);
+}
+
+.descuento__sello {
+  flex: none;
+  padding: 3px 7px;
+  border-radius: var(--radio);
+  background: var(--magenta-500);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.falta-mayoreo {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radio);
+  background: var(--menta-100);
+  color: var(--ciruela-800);
+  font-size: 0.9375rem;
+}
+
 .aclaracion {
   color: var(--tinta-2);
   font-size: 0.9rem;

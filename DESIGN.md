@@ -85,7 +85,7 @@ components:
 
 ## Overview
 
-**El muestrario de color.** El catálogo es una carta de colores: el mismo rollo de trapillo en decenas de tonos y cinco grosores. La portada abre un abanico de fichas de color reales; cada producto es una tarjeta blanca donde el rollo (SVG, con el largo del ancho real de la tira) descansa sobre un velo de su propio color. Todo termina en un mensaje de WhatsApp ya escrito.
+**El muestrario de color.** El catálogo es una carta de colores: el mismo rollo de trapillo en decenas de tonos y cuatro grosores. La portada abre un abanico de fichas de color reales; cada producto es una tarjeta blanca donde el rollo (SVG, con el largo del ancho real de la tira) descansa sobre un velo de su propio color. Todo termina en un mensaje de WhatsApp ya escrito.
 
 Este sistema reemplaza a una primera versión (verde botella, magenta rojizo, cordel dorado y etiquetas colgantes) que se leía navideña. **Regla de origen:** nada de verde oscuro junto a rojo, ni dorados, ni etiquetas de regalo.
 

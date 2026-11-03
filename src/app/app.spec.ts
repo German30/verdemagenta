@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
-import { erroresCliente, mensajePedido } from './util/formato';
+import { cuentaPedido, erroresCliente, mensajePedido } from './util/formato';
 import { Producto } from './modelos';
 import { PedidoService } from './servicios/pedido';
 
@@ -65,6 +65,27 @@ describe('mensajePedido', () => {
     expect(texto).toContain('Jumbo 20 cm – Mostaza ($800 c/u) = $800 — bajo pedido');
     expect(texto).not.toContain('Azul Rey ($160 c/u) = $160 — bajo pedido');
     expect(texto).toContain('*bajo pedido* no está en inventario');
+  });
+
+  it('aplica el 15% de mayoreo a los trapillos desde 25 piezas, sin tocar accesorios', () => {
+    const solido: Producto = { ...rollo, precio: 150 };
+    const gancho: Producto = { ...rollo, id: 3, nombre: 'Gancho ergonómico', tipo: 'accesorio', grosor: null, precio: 100 };
+    const c = cuentaPedido([{ producto: solido, cantidad: 25 }, { producto: gancho, cantidad: 1 }]);
+    expect(c.mayoreo).toBe(true);
+    expect(c.subtotal).toBe(3850);
+    expect(c.total).toBe(25 * 127.5 + 100);
+    expect(c.ahorro).toBe(562.5);
+    const texto = mensajePedido([{ producto: solido, cantidad: 25 }], { nombre: '', correo: '', entrega: '', notas: '' });
+    expect(texto).toContain('($127.50 c/u)');
+    expect(texto).toContain('Descuento mayoreo 15%');
+  });
+
+  it('no aplica mayoreo con 24 piezas de trapillo aunque haya accesorios', () => {
+    const gancho: Producto = { ...rollo, id: 3, tipo: 'accesorio', grosor: null, precio: 100 };
+    const c = cuentaPedido([{ producto: rollo, cantidad: 24 }, { producto: gancho, cantidad: 5 }]);
+    expect(c.mayoreo).toBe(false);
+    expect(c.faltan).toBe(1);
+    expect(c.total).toBe(c.subtotal);
   });
 });
 

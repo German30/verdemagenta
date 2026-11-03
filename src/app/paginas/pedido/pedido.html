@@ -38,7 +38,7 @@
               <app-foto class="linea__rollo vt-foto" [producto]="l.producto" [style.view-transition-name]="'foto-' + l.producto.id" tamanos="72px" [sombra]="false" />
               <div class="linea__nombre">
                 <a class="rotulo" [routerLink]="['/producto', l.producto.id]">{{ l.producto.titulo }}</a>
-                <span><span class="sello">{{ grosor(l.producto.grosor) }}</span> <span class="cifra">{{ l.producto.precio | precio }} c/u</span>@if (l.producto.bajoPedido) { <span class="bajo-pedido">Bajo pedido</span> }</span>
+                <span><span class="sello">{{ grosor(l.producto.grosor) }}</span> <span class="cifra">@if (pedido.cuenta().mayoreo && l.producto.tipo === 'trapillo') {<s class="antes">{{ l.producto.precio | precio }}</s> }{{ pieza(l) | precio }} c/u</span>@if (l.producto.bajoPedido) { <span class="bajo-pedido">Bajo pedido</span> }</span>
               </div>
               <div class="paso" role="group" [attr.aria-label]="'Cantidad de ' + l.producto.titulo">
                 <button type="button" (click)="pedido.fijar(l.producto.id, l.cantidad - 1)"
@@ -51,11 +51,27 @@
                   <app-icono nombre="mas" />
                 </button>
               </div>
-              <span class="linea__subtotal cifra">{{ l.cantidad * l.producto.precio | precio }}</span>
+              <span class="linea__subtotal cifra">{{ l.cantidad * pieza(l) | precio }}</span>
             </li>
           }
         </ul>
 
+        @if (pedido.cuenta(); as c) {
+          @if (c.mayoreo) {
+            <dl class="desglose">
+              <div><dt>Subtotal</dt><dd class="cifra">{{ c.subtotal | precio }}</dd></div>
+              <div class="desglose__ahorro">
+                <dt><span class="descuento__sello cifra">{{ mayoreo.descuento * 100 }}%</span> Mayoreo · {{ mayoreo.piezas }} o más piezas de trapillo</dt>
+                <dd class="cifra">−{{ c.ahorro | precio }}</dd>
+              </div>
+            </dl>
+          } @else if (c.piezasTrapillo) {
+            <p class="falta-mayoreo">
+              Te {{ c.faltan === 1 ? 'falta' : 'faltan' }} <strong class="cifra">{{ c.faltan }}</strong>
+              {{ c.faltan === 1 ? 'pieza' : 'piezas' }} de trapillo para el <strong>{{ mayoreo.descuento * 100 }}% de descuento</strong> de mayoreo.
+            </p>
+          }
+        }
         <div class="total">
           <span>Total</span>
           <strong class="cifra">{{ pedido.total() | precio }} <small>MXN</small></strong>

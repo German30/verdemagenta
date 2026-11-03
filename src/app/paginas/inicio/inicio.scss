@@ -48,6 +48,25 @@ h1 {
   gap: 12px;
 }
 
+// Envíos nacionales: sello rosa bajo las acciones
+.portada__envio {
+  --fondo-icono: var(--magenta-100);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: start;
+  padding: 10px 16px;
+  border: 1px solid var(--magenta-300);
+  border-radius: 999px;
+  background: var(--magenta-100);
+  color: var(--ciruela-800);
+
+  app-icono {
+    font-size: 1.3rem;
+    color: var(--magenta-600);
+  }
+}
+
 // Abanico de ganchos de crochet: se abren desde un punto bajo la portada
 .abanico {
   --ancho-gancho: clamp(44px, 5vw, 66px);

@@ -42,6 +42,14 @@
 
           <p class="precio cifra">{{ p.precio | precio }} <span>MXN</span></p>
 
+          @if (p.tipo === 'trapillo') {
+            <p class="descuento">
+              <span class="descuento__sello cifra">{{ mayoreo.descuento * 100 }}%</span>
+              <span>de descuento en la compra de <strong>{{ mayoreo.piezas }} o más piezas</strong> de trapillo:
+                <strong class="descuento__precio cifra">{{ precioMayoreo(p.precio) | precio }}</strong> c/u</span>
+            </p>
+          }
+
           @if (p.bajoPedido) {
             <p class="nota-pedido">
               <span class="bajo-pedido">Bajo pedido</span>

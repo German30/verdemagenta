@@ -1,6 +1,7 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { LineaPedido, Producto } from '../modelos';
 import { CatalogoService } from './catalogo';
+import { cuentaPedido } from '../util/formato';
 
 const CLAVE = 'verdemagenta.pedido';
 const MAXIMO = 99;
@@ -44,8 +45,10 @@ export class PedidoService {
       .filter((l) => !!l.producto);
   });
 
-  readonly piezas = computed(() => this.lineas().reduce((s, l) => s + l.cantidad, 0));
-  readonly total = computed(() => this.lineas().reduce((s, l) => s + l.cantidad * l.producto.precio, 0));
+  /** Piezas, subtotal y total con el descuento de mayoreo ya aplicado si corresponde. */
+  readonly cuenta = computed(() => cuentaPedido(this.lineas()));
+  readonly piezas = computed(() => this.cuenta().piezas);
+  readonly total = computed(() => this.cuenta().total);
 
   constructor() {
     effect(() => {

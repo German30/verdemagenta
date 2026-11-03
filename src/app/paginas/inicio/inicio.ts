@@ -14,7 +14,6 @@ const REPRESENTANTES: Record<string, string[]> = {
   '2-5': ['Magenta', 'Rosa Fucsia'],
   '3': ['Verde Tropical', 'Azul Turquesa'],
   '4-5': ['Azul Turquesa', 'Amarillo'],
-  '6': ['Naranja', 'Mostaza'],
   'jumbo-20': ['Rosa Palo', 'Mostaza'],
 };
 

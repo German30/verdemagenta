@@ -22,12 +22,12 @@ Verdemagenta vende rollos de trapillo y accesorios. El sitio es un **catálogo c
 
 ## Positioning
 
-El inventario es, en esencia, una carta de colores: el mismo rollo en decenas de tonos y cinco grosores. El sitio deja elegir y combinar por color y grosor mejor que una tienda WooCommerce genérica, y cierra la venta en una conversación humana.
+El inventario es, en esencia, una carta de colores: el mismo rollo en decenas de tonos y cuatro grosores. El sitio deja elegir y combinar por color y grosor mejor que una tienda WooCommerce genérica, y cierra la venta en una conversación humana.
 
 ## Operating Context
 
 - Un solo origen de datos: tabla `producto` (id, producto, precio, descripcion, categoria). 157+ registros.
-- Categorías reales: TRAPILLO 2.5 CMS, TRAPILLO 3 CMS, TRAPILLO 4.5 CMS, TRAPILLO 6 CMS, TRAPILLO JUMBO 20 CMS, ACCESORIOS.
+- Categorías reales: TRAPILLO 2.5 CMS, TRAPILLO 3 CMS, TRAPILLO 4.5 CMS, TRAPILLO JUMBO 20 CMS, ACCESORIOS.
 - El color está solo en el nombre ("Rollo Trapillo Gold 2.5 cm – Azul Petróleo"); acabados especiales: Metálico, Polipiel, Mate.
 - Sin imágenes, sin stock, sin SKU en la BD.
 

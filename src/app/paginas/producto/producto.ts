@@ -16,7 +16,7 @@ import { Foto } from '../../componentes/foto';
 import { CatalogoService } from '../../servicios/catalogo';
 import { PedidoService } from '../../servicios/pedido';
 import { fondoMuestra } from '../../util/color';
-import { enlaceWhatsApp, mensajeConsulta, PrecioPipe } from '../../util/formato';
+import { enlaceWhatsApp, MAYOREO, mensajeConsulta, precioMayoreo, PrecioPipe } from '../../util/formato';
 import { Revelar } from '../../util/revelar';
 
 @Component({
@@ -29,6 +29,8 @@ import { Revelar } from '../../util/revelar';
 export class ProductoPagina {
   protected readonly catalogo = inject(CatalogoService);
   protected readonly pedido = inject(PedidoService);
+  protected readonly mayoreo = MAYOREO;
+  protected readonly precioMayoreo = precioMayoreo;
   private readonly title = inject(Title);
 
   readonly id = input.required<string>();

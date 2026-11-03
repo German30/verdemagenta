@@ -15,7 +15,8 @@ export type NombreIcono =
   | 'atras'
   | 'quitar'
   | 'listo'
-  | 'recargar';
+  | 'recargar'
+  | 'envio';
 
 /** Íconos dibujados a mano en un solo trazo de 1.75. */
 @Component({
@@ -78,6 +79,10 @@ export type NombreIcono =
         }
         @case ('recargar') {
           <path d="M19 12a7 7 0 1 1-2.1-5" /><path d="M19 4.5V8h-3.5" />
+        }
+        @case ('envio') {
+          <path d="M3 6.5h10.5v10H3zM13.5 10H17l3.5 3.5v3h-7" />
+          <circle cx="7" cy="17.5" r="1.8" fill="var(--fondo-icono, #fff)" /><circle cx="17" cy="17.5" r="1.8" fill="var(--fondo-icono, #fff)" />
         }
       }
     </svg>

@@ -85,6 +85,34 @@
   }
 }
 
+.descuento {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 46ch;
+  margin-top: -6px;
+  padding: 10px 14px;
+  border-radius: var(--radio);
+  background: #f6f0e6;
+  color: var(--ciruela-800);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.descuento__sello {
+  flex: none;
+  padding: 4px 8px;
+  border-radius: var(--radio);
+  background: var(--magenta-500);
+  color: #fff;
+  font-weight: 800;
+}
+
+.descuento__precio {
+  color: var(--magenta-700);
+  font-weight: 800;
+}
+
 .descripcion {
   max-width: 60ch;
   color: var(--tinta-2);

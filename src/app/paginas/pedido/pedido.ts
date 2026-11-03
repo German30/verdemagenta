@@ -4,14 +4,17 @@ import { Icono } from '../../componentes/icono';
 import { Foto } from '../../componentes/foto';
 import { CatalogoService } from '../../servicios/catalogo';
 import { PedidoService } from '../../servicios/pedido';
+import { LineaPedido } from '../../modelos';
 import { TIENDA } from '../../tienda.config';
 import {
   DatosCliente,
   enlaceWhatsApp,
   ErroresCliente,
   erroresCliente,
+  MAYOREO,
   mensajePedido,
   PrecioPipe,
+  unitario,
   vistaWhatsApp,
 } from '../../util/formato';
 
@@ -101,6 +104,13 @@ export class Pedido {
       return;
     }
     this.enviado.set(true);
+  }
+
+  protected readonly mayoreo = MAYOREO;
+
+  /** Precio por pieza de la línea, con el descuento de mayoreo si el pedido lo alcanza. */
+  protected pieza(l: LineaPedido): number {
+    return unitario(l, this.pedido.cuenta().mayoreo);
   }
 
   protected grosor(id: string | null): string {
