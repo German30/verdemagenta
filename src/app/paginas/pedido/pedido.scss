@@ -160,11 +160,24 @@
   font-weight: 800;
 }
 
+.aviso-proveedor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radio);
+  background: #f6f0e6;
+  color: var(--ciruela-800);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
 .falta-mayoreo {
   margin-top: 16px;
   padding: 10px 14px;
   border-radius: var(--radio);
-  background: var(--menta-100);
+  background: #f6f0e6;
   color: var(--ciruela-800);
   font-size: 0.9375rem;
 }

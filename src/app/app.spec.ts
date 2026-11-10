@@ -87,6 +87,18 @@ describe('mensajePedido', () => {
     expect(c.faltan).toBe(1);
     expect(c.total).toBe(c.subtotal);
   });
+
+  it('avisa el descuento del proveedor de 3 a 24 piezas de trapillo, sin cambiar el total', () => {
+    const vacio = { nombre: '', correo: '', entrega: '', notas: '' };
+    const gancho: Producto = { ...rollo, id: 3, tipo: 'accesorio', grosor: null, precio: 100 };
+    expect(cuentaPedido([{ producto: rollo, cantidad: 2 }, { producto: gancho, cantidad: 5 }]).proveedor).toBe(false);
+    expect(cuentaPedido([{ producto: rollo, cantidad: 25 }]).proveedor).toBe(false);
+    const c = cuentaPedido([{ producto: rollo, cantidad: 3 }]);
+    expect(c.proveedor).toBe(true);
+    expect(c.total).toBe(c.subtotal);
+    expect(mensajePedido([{ producto: rollo, cantidad: 3 }], vacio)).toContain('En la compra de 3 unidades o más se le aplica un descuento');
+    expect(mensajePedido([{ producto: rollo, cantidad: 25 }], vacio)).not.toContain('3 unidades o más');
+  });
 });
 
 describe('PedidoService', () => {

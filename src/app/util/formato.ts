@@ -20,6 +20,15 @@ export class PrecioPipe implements PipeTransform {
 /** Mayoreo: 15% en cada rollo de trapillo cuando el pedido junta 25 o más piezas de trapillo. */
 export const MAYOREO = { piezas: 25, descuento: 0.15 };
 
+/**
+ * Descuento del proveedor: desde 3 piezas de trapillo (y por debajo del mayoreo) se avisa que aplica un
+ * descuento. El monto lo define el proveedor al confirmar, así que no se resta del total.
+ */
+export const DESCUENTO_PROVEEDOR = {
+  piezas: 3,
+  aviso: 'En la compra de 3 unidades o más se le aplica un descuento',
+};
+
 /** Precio por pieza a mayoreo, redondeado a centavos ($150 → $127.50). */
 export function precioMayoreo(valor: number): number {
   return Math.round(valor * (1 - MAYOREO.descuento) * 100) / 100;
@@ -29,6 +38,8 @@ export interface Cuenta {
   piezas: number;
   piezasTrapillo: number;
   mayoreo: boolean;
+  /** De 3 a 24 piezas de trapillo: aplica el descuento del proveedor (informativo, no cambia el total). */
+  proveedor: boolean;
   /** Piezas de trapillo que faltan para el mayoreo (0 si ya aplica). */
   faltan: number;
   subtotal: number;
@@ -51,6 +62,7 @@ export function cuentaPedido(lineas: LineaPedido[]): Cuenta {
     piezas,
     piezasTrapillo,
     mayoreo,
+    proveedor: !mayoreo && piezasTrapillo >= DESCUENTO_PROVEEDOR.piezas,
     faltan: mayoreo ? 0 : MAYOREO.piezas - piezasTrapillo,
     subtotal,
     ahorro: Math.round((subtotal - total) * 100) / 100,
@@ -86,7 +98,7 @@ export function erroresCliente(c: DatosCliente): ErroresCliente {
 }
 
 export function mensajePedido(lineas: LineaPedido[], cliente: DatosCliente): string {
-  const { piezas, mayoreo, subtotal, ahorro, total } = cuentaPedido(lineas);
+  const { piezas, mayoreo, proveedor, subtotal, ahorro, total } = cuentaPedido(lineas);
   const renglones = lineas.map((l) => {
     const pieza = unitario(l, mayoreo);
     return (
@@ -101,6 +113,7 @@ export function mensajePedido(lineas: LineaPedido[], cliente: DatosCliente): str
         `Descuento mayoreo ${MAYOREO.descuento * 100}% (${MAYOREO.piezas} o más piezas de trapillo): −${precio(ahorro)}`,
       ]
     : [];
+  const avisoProveedor = proveedor ? ['', `${DESCUENTO_PROVEEDOR.aviso} (lo confirma la tienda).`] : [];
   const aviso = lineas.some((l) => l.producto.bajoPedido)
     ? ['', 'Entiendo que lo marcado *bajo pedido* no está en inventario y se pide al confirmar.']
     : [];
@@ -118,6 +131,7 @@ export function mensajePedido(lineas: LineaPedido[], cliente: DatosCliente): str
     ...descuento,
     ...(mayoreo ? [] : ['']),
     `*Total: ${precio(total)} ${TIENDA.moneda}* (${piezas} ${piezas === 1 ? 'pieza' : 'piezas'})`,
+    ...avisoProveedor,
     ...aviso,
     ...(extra.length ? ['', ...extra] : []),
   ].join('\n');
