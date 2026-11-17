@@ -103,14 +103,27 @@
             [attr.aria-invalid]="!!error('correo')" [attr.aria-describedby]="error('correo') ? 'correo-error' : null" />
           @if (error('correo'); as e) { <p id="correo-error" class="error">{{ e }}</p> }
         </div>
-        <div class="campo" [class.con-error]="error('entrega')">
-          <label for="entrega">Dirección de entrega <span class="requerido" aria-hidden="true">*</span></label>
-          <textarea id="entrega" rows="2" autocomplete="street-address" required
-            placeholder="Calle y número, colonia, ciudad y código postal" [value]="cliente().entrega"
-            (input)="campo('entrega', $event)" (blur)="tocar('entrega')"
-            [attr.aria-invalid]="!!error('entrega')" [attr.aria-describedby]="error('entrega') ? 'entrega-error' : null"></textarea>
-          @if (error('entrega'); as e) { <p id="entrega-error" class="error">{{ e }}</p> }
+        <div class="campo" [class.con-error]="error('modalidad')">
+          <label for="modalidad">Forma de entrega <span class="requerido" aria-hidden="true">*</span></label>
+          <select id="modalidad" required (change)="campo('modalidad', $event)" (blur)="tocar('modalidad')"
+            [attr.aria-invalid]="!!error('modalidad')" [attr.aria-describedby]="error('modalidad') ? 'modalidad-error' : null">
+            <option value="" disabled [selected]="!cliente().modalidad">Elige una opción</option>
+            @for (m of modalidades; track m.id) {
+              <option [value]="m.id" [selected]="cliente().modalidad === m.id">{{ m.nombre }}</option>
+            }
+          </select>
+          @if (error('modalidad'); as e) { <p id="modalidad-error" class="error">{{ e }}</p> }
         </div>
+        @if (cliente().modalidad === 'domicilio') {
+          <div class="campo" [class.con-error]="error('entrega')" animate.enter="entra-campo">
+            <label for="entrega">Dirección de entrega <span class="requerido" aria-hidden="true">*</span></label>
+            <textarea id="entrega" rows="2" autocomplete="street-address" required
+              placeholder="Calle y número, colonia, ciudad y código postal" [value]="cliente().entrega"
+              (input)="campo('entrega', $event)" (blur)="tocar('entrega')"
+              [attr.aria-invalid]="!!error('entrega')" [attr.aria-describedby]="error('entrega') ? 'entrega-error' : null"></textarea>
+            @if (error('entrega'); as e) { <p id="entrega-error" class="error">{{ e }}</p> }
+          </div>
+        }
         <div class="campo">
           <label for="notas">Notas <span class="opcional">opcional</span></label>
           <textarea id="notas" rows="2" placeholder="Por ejemplo: lo necesito para el viernes" [value]="cliente().notas"
@@ -135,7 +148,7 @@
           <app-icono nombre="whatsapp" /> Enviar pedido por WhatsApp
         </a>
         @if (!completo()) {
-          <p class="falta">Completa tu nombre, correo y dirección para enviar el pedido.</p>
+          <p class="falta">Completa tu nombre, correo y forma de entrega para enviar el pedido.</p>
         }
         @if (sinNumero) {
           <p class="aviso-dev">Falta configurar el número de la tienda en <code>tienda.config.ts</code>; por ahora WhatsApp te pedirá elegir el contacto.</p>

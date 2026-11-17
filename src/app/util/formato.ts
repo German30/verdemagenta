@@ -75,25 +75,35 @@ export function nombreCorto(p: Producto): string {
   return p.nombre.replace(/^Rollo\s+/i, '');
 }
 
+/** Cómo recibe el cliente su pedido; vacío mientras no elige. */
+export type Modalidad = '' | 'recoger' | 'domicilio';
+
+export const MODALIDADES: { id: Exclude<Modalidad, ''>; nombre: string }[] = [
+  { id: 'recoger', nombre: 'Recoger en Tienda' },
+  { id: 'domicilio', nombre: 'Envío a Domicilio' },
+];
+
 export interface DatosCliente {
   nombre: string;
   correo: string;
-  /** Dirección de entrega completa. */
+  modalidad: Modalidad;
+  /** Dirección de entrega completa; solo cuenta con envío a domicilio. */
   entrega: string;
   notas: string;
 }
 
-export type ErroresCliente = Partial<Record<'nombre' | 'correo' | 'entrega', string>>;
+export type ErroresCliente = Partial<Record<'nombre' | 'correo' | 'modalidad' | 'entrega', string>>;
 
 const CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-/** Nombre, correo y dirección son obligatorios para enviar el pedido. */
+/** Nombre, correo y forma de entrega son obligatorios; la dirección, solo con envío a domicilio. */
 export function erroresCliente(c: DatosCliente): ErroresCliente {
   const errores: ErroresCliente = {};
   if (!c.nombre.trim()) errores.nombre = 'Escribe tu nombre.';
   if (!c.correo.trim()) errores.correo = 'Escribe tu correo electrónico.';
   else if (!CORREO.test(c.correo.trim())) errores.correo = 'Revisa tu correo, por ejemplo: nombre@gmail.com';
-  if (!c.entrega.trim()) errores.entrega = 'Escribe la dirección de entrega.';
+  if (!c.modalidad) errores.modalidad = 'Elige si lo recoges o te lo enviamos.';
+  else if (c.modalidad === 'domicilio' && !c.entrega.trim()) errores.entrega = 'Escribe la dirección de entrega.';
   return errores;
 }
 
@@ -120,7 +130,9 @@ export function mensajePedido(lineas: LineaPedido[], cliente: DatosCliente): str
   const extra = [
     cliente.nombre.trim() && `Nombre: ${cliente.nombre.trim()}`,
     cliente.correo.trim() && `Correo: ${cliente.correo.trim()}`,
-    cliente.entrega.trim() && `Dirección de entrega: ${cliente.entrega.trim()}`,
+    cliente.modalidad === 'recoger' && 'Entrega: Recoger en Tienda',
+    cliente.modalidad === 'domicilio' && 'Entrega: Envío a domicilio',
+    cliente.modalidad === 'domicilio' && cliente.entrega.trim() && `Dirección de entrega: ${cliente.entrega.trim()}`,
     cliente.notas.trim() && `Notas: ${cliente.notas.trim()}`,
   ].filter(Boolean);
 

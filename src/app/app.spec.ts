@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
-import { cuentaPedido, erroresCliente, mensajePedido } from './util/formato';
+import { cuentaPedido, DatosCliente, erroresCliente, mensajePedido } from './util/formato';
 import { Producto } from './modelos';
 import { PedidoService } from './servicios/pedido';
 
@@ -47,7 +47,7 @@ describe('mensajePedido', () => {
   };
 
   it('lista cantidades, subtotales y total', () => {
-    const texto = mensajePedido([{ producto: rollo, cantidad: 3 }], { nombre: 'Ana', correo: 'ana@correo.com', entrega: '', notas: '' });
+    const texto = mensajePedido([{ producto: rollo, cantidad: 3 }], { nombre: 'Ana', correo: 'ana@correo.com', modalidad: '', entrega: '', notas: '' });
     expect(texto).toContain('3 × Trapillo Gold 3 cm – Azul Rey');
     expect(texto).toContain('*Total: $480 MXN* (3 piezas)');
     expect(texto).toContain('Nombre: Ana');
@@ -56,11 +56,21 @@ describe('mensajePedido', () => {
     expect(texto).not.toContain('bajo pedido');
   });
 
+  it('incluye la forma de entrega y la dirección solo con envío a domicilio', () => {
+    const base: DatosCliente = { nombre: 'Ana', correo: '', modalidad: 'domicilio', entrega: 'Av. Juárez 10', notas: '' };
+    const domicilio = mensajePedido([{ producto: rollo, cantidad: 1 }], base);
+    expect(domicilio).toContain('Entrega: Envío a domicilio');
+    expect(domicilio).toContain('Dirección de entrega: Av. Juárez 10');
+    const recoger = mensajePedido([{ producto: rollo, cantidad: 1 }], { ...base, modalidad: 'recoger' });
+    expect(recoger).toContain('Entrega: Recoger');
+    expect(recoger).not.toContain('Dirección de entrega');
+  });
+
   it('marca los grosores bajo pedido y lo avisa al final', () => {
     const jumbo: Producto = { ...rollo, id: 2, nombre: 'Rollo Trapillo Gold Jumbo 20 cm – Mostaza', grosor: 'jumbo-20', bajoPedido: true, precio: 800 };
     const texto = mensajePedido(
       [{ producto: rollo, cantidad: 1 }, { producto: jumbo, cantidad: 1 }],
-      { nombre: '', correo: '', entrega: '', notas: '' },
+      { nombre: '', correo: '', modalidad: '', entrega: '', notas: '' },
     );
     expect(texto).toContain('Jumbo 20 cm – Mostaza ($800 c/u) = $800 — bajo pedido');
     expect(texto).not.toContain('Azul Rey ($160 c/u) = $160 — bajo pedido');
@@ -75,7 +85,7 @@ describe('mensajePedido', () => {
     expect(c.subtotal).toBe(3850);
     expect(c.total).toBe(25 * 127.5 + 100);
     expect(c.ahorro).toBe(562.5);
-    const texto = mensajePedido([{ producto: solido, cantidad: 25 }], { nombre: '', correo: '', entrega: '', notas: '' });
+    const texto = mensajePedido([{ producto: solido, cantidad: 25 }], { nombre: '', correo: '', modalidad: '', entrega: '', notas: '' });
     expect(texto).toContain('($127.50 c/u)');
     expect(texto).toContain('Descuento mayoreo 15%');
   });
@@ -89,7 +99,7 @@ describe('mensajePedido', () => {
   });
 
   it('avisa el descuento del proveedor de 3 a 24 piezas de trapillo, sin cambiar el total', () => {
-    const vacio = { nombre: '', correo: '', entrega: '', notas: '' };
+    const vacio = { nombre: '', correo: '', modalidad: '' as const, entrega: '', notas: '' };
     const gancho: Producto = { ...rollo, id: 3, tipo: 'accesorio', grosor: null, precio: 100 };
     expect(cuentaPedido([{ producto: rollo, cantidad: 2 }, { producto: gancho, cantidad: 5 }]).proveedor).toBe(false);
     expect(cuentaPedido([{ producto: rollo, cantidad: 25 }]).proveedor).toBe(false);
@@ -114,14 +124,25 @@ describe('PedidoService', () => {
 });
 
 describe('erroresCliente', () => {
-  const completo = { nombre: 'Ana', correo: 'ana@correo.com', entrega: 'Av. Juárez 10, Centro, Guadalajara, 44100', notas: '' };
+  const completo: DatosCliente = {
+    nombre: 'Ana',
+    correo: 'ana@correo.com',
+    modalidad: 'domicilio',
+    entrega: 'Av. Juárez 10, Centro, Guadalajara, 44100',
+    notas: '',
+  };
 
-  it('acepta un cliente con nombre, correo y dirección', () => {
+  it('acepta un envío a domicilio con nombre, correo y dirección', () => {
     expect(erroresCliente(completo)).toEqual({});
   });
 
-  it('exige nombre, correo y dirección', () => {
-    expect(Object.keys(erroresCliente({ nombre: ' ', correo: '', entrega: '', notas: 'algo' }))).toEqual(['nombre', 'correo', 'entrega']);
+  it('exige nombre, correo y forma de entrega', () => {
+    expect(Object.keys(erroresCliente({ nombre: ' ', correo: '', modalidad: '', entrega: '', notas: 'algo' }))).toEqual(['nombre', 'correo', 'modalidad']);
+  });
+
+  it('pide la dirección solo con envío a domicilio', () => {
+    expect(erroresCliente({ ...completo, entrega: ' ' }).entrega).toContain('dirección');
+    expect(erroresCliente({ ...completo, modalidad: 'recoger', entrega: '' })).toEqual({});
   });
 
   it('rechaza un correo mal escrito', () => {

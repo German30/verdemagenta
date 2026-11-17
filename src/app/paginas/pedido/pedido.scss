@@ -244,6 +244,7 @@
 
 .con-error {
   input,
+  select,
   textarea {
     border-color: #b3123c;
   }
@@ -430,6 +431,16 @@
 }
 .sale-linea {
   animation: sale-linea 0.22s ease-in both;
+}
+.entra-campo {
+  animation: entra-campo 0.25s var(--salida) both;
+}
+
+@keyframes entra-campo {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
 }
 
 @keyframes entra-linea {

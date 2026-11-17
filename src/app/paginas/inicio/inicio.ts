@@ -139,7 +139,7 @@ export class Inicio {
       { producto: tomar('Ivory', '3'), cantidad: 1 },
     ].filter((l): l is { producto: Producto; cantidad: number } => !!l.producto);
     return lineas.length
-      ? vistaWhatsApp(mensajePedido(lineas, { nombre: 'Ana', correo: '', entrega: 'Guadalajara, Jal.', notas: '' }))
+      ? vistaWhatsApp(mensajePedido(lineas, { nombre: 'Ana', correo: '', modalidad: 'domicilio', entrega: 'Guadalajara, Jal.', notas: '' }))
       : '';
   });
 

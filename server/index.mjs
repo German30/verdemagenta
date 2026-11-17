@@ -79,7 +79,12 @@ async function leerProductos() {
     lomos: new Set(deFotos('lomos.json', [])),
     rollos: new Set(deFotos('rollos.json', [])),
   };
-  cache = { cuando: Date.now(), productos: filas.map((f) => aProducto(f, analisis)) };
+  // Agrupados por grosor (en el orden de GROSORES; accesorios al final) y por id dentro de cada uno,
+  // para que los productos dados de alta después no queden sueltos al final del catálogo
+  const posicion = new Map(GROSORES.map((g, i) => [g.id, i]));
+  const lugar = (p) => posicion.get(p.grosor) ?? GROSORES.length;
+  const productos = filas.map((f) => aProducto(f, analisis)).sort((a, b) => lugar(a) - lugar(b) || a.id - b.id);
+  cache = { cuando: Date.now(), productos };
   return cache.productos;
 }
 

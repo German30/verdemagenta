@@ -14,6 +14,8 @@ import {
   erroresCliente,
   MAYOREO,
   mensajePedido,
+  Modalidad,
+  MODALIDADES,
   PrecioPipe,
   unitario,
   vistaWhatsApp,
@@ -21,7 +23,11 @@ import {
 
 const CLAVE_CLIENTE = 'verdemagenta.cliente';
 type Obligatorio = keyof ErroresCliente;
-const OBLIGATORIOS: Obligatorio[] = ['nombre', 'correo', 'entrega'];
+const OBLIGATORIOS: Obligatorio[] = ['nombre', 'correo', 'modalidad', 'entrega'];
+
+function modalidadValida(m: unknown): Modalidad {
+  return MODALIDADES.some((o) => o.id === m) ? (m as Modalidad) : '';
+}
 
 function hayGuardado(): boolean {
   try {
@@ -34,9 +40,15 @@ function hayGuardado(): boolean {
 function leerCliente(): DatosCliente {
   try {
     const c = JSON.parse(localStorage.getItem(CLAVE_CLIENTE) ?? '{}');
-    return { nombre: c.nombre ?? '', correo: c.correo ?? '', entrega: c.entrega ?? '', notas: '' };
+    return {
+      nombre: c.nombre ?? '',
+      correo: c.correo ?? '',
+      modalidad: modalidadValida(c.modalidad),
+      entrega: c.entrega ?? '',
+      notas: '',
+    };
   } catch {
-    return { nombre: '', correo: '', entrega: '', notas: '' };
+    return { nombre: '', correo: '', modalidad: '', entrega: '', notas: '' };
   }
 }
 
@@ -68,9 +80,9 @@ export class Pedido {
 
   constructor() {
     effect(() => {
-      const { nombre, correo, entrega } = this.cliente();
+      const { nombre, correo, modalidad, entrega } = this.cliente();
       try {
-        if (this.recordar()) localStorage.setItem(CLAVE_CLIENTE, JSON.stringify({ nombre, correo, entrega }));
+        if (this.recordar()) localStorage.setItem(CLAVE_CLIENTE, JSON.stringify({ nombre, correo, modalidad, entrega }));
         else localStorage.removeItem(CLAVE_CLIENTE);
       } catch {
         // sin almacenamiento, no pasa nada
@@ -79,7 +91,7 @@ export class Pedido {
   }
 
   protected campo(clave: keyof DatosCliente, evento: Event): void {
-    const valor = (evento.target as HTMLInputElement).value;
+    const valor = (evento.target as HTMLInputElement | HTMLSelectElement).value;
     this.cliente.update((c) => ({ ...c, [clave]: valor }));
   }
 
@@ -107,6 +119,7 @@ export class Pedido {
     this.enviado.set(true);
   }
 
+  protected readonly modalidades = MODALIDADES;
   protected readonly mayoreo = MAYOREO;
   protected readonly proveedor = DESCUENTO_PROVEEDOR;
 
