@@ -6,11 +6,12 @@ Catálogo de trapillo con carrito que envía el pedido por WhatsApp. Angular 21 
 ## Requisitos
 
 - Node 22.12 o superior
-- MySQL con la base `inventario_vm` (tabla `producto`)
+- MySQL 8 (la base `inventario_vm` se crea sola, ver abajo)
 
 ## Configuración
 
 1. Copia `.env.example` a `.env` y pon tus credenciales de MySQL.
+   Al correr `npm start` se crean la base `inventario_vm` y la tabla `producto` y, si la tabla está vacía, se cargan los registros de [server/bd/inventario_vm.sql](server/bd/inventario_vm.sql). Si ya tiene registros no se toca. Si `DB_USER` es el usuario de solo lectura, pon también `DB_ADMIN_USER` y `DB_ADMIN_PASSWORD` para este paso.
 2. Pon el número de WhatsApp de la tienda en [src/app/tienda.config.ts](src/app/tienda.config.ts) (formato internacional sin signos, p. ej. `5215512345678`). Ahí también van correo y redes; lo que quede vacío no se muestra.
 
 ## Fotos de producto

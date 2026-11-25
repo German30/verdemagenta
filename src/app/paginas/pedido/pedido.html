@@ -74,7 +74,13 @@
         }
         <p class="aviso-proveedor">
           <span class="descuento__sello">Descuento</span>
-          <span>{{ proveedor.aviso }}. El monto lo confirma la tienda por WhatsApp.</span>
+          <span>
+            {{ proveedor.aviso }}.
+            @if (pedido.cuenta().proveedor) {
+              Aplica a tus piezas de <span class="cifra">{{ listaPrecios(pedido.cuenta().preciosProveedor) }}</span>.
+            }
+            El monto lo confirma la tienda por WhatsApp.
+          </span>
         </p>
         <div class="total">
           <span>Total</span>

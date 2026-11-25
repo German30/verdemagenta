@@ -9,6 +9,7 @@ import { TIENDA } from '../../tienda.config';
 import {
   DatosCliente,
   DESCUENTO_PROVEEDOR,
+  listaPrecios,
   enlaceWhatsApp,
   ErroresCliente,
   erroresCliente,
@@ -122,6 +123,7 @@ export class Pedido {
   protected readonly modalidades = MODALIDADES;
   protected readonly mayoreo = MAYOREO;
   protected readonly proveedor = DESCUENTO_PROVEEDOR;
+  protected readonly listaPrecios = listaPrecios;
 
   /** Precio por pieza de la línea, con el descuento de mayoreo si el pedido lo alcanza. */
   protected pieza(l: LineaPedido): number {
